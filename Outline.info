@@ -1,0 +1,21 @@
+Quartermaster Purpose
+
+The purpose of this program is to make keeping track of ingredients in my kitchen fun and easy.
+
+1. I want to know exactly how much of any ingredient I have in the kitchen at any time.
+2. I want to know what ingredients are to be used in what meals throughout the week. I think about this as the ingredients having reservations in the recipes I am cooking. 
+3. I want to keep track of how fresh ingredients are, and set notifications for things that are about to go bad.
+4. I want to track what meals I have during a week, and what ingredients can go into them.
+5. I want to keep a menu of dishes I could make based on the ingredients that do not have reservations.
+6. I want to check in items with a swipey system.
+7. I want to forecast grocery needs in the future.
+
+ 
+
+Let's start by making a list of all the ingredients we can think of. We need to define them with the following information
+    -Name (The name of the ingredient)
+    -Category (Can be Produce, Spice, Dairy, Meat, Frozen, more to come)
+    -Quantity (When you import an item into your pantry, this is the number of items that are added. These are the default values, can be customized)
+    -Quantity_Type (fluid ounces, sticks, packs, pound, whatever the unit type is)
+    -Expiration (this is what will set the timer on the food item for when a notification will appear)
+
