@@ -11,6 +11,18 @@ let butter_Tbsp = {name: "A Tablespoon of Butter", category: "Dairy", quantity: 
 let chedder_cheese_sliced = { name: "Sliced Cheddar Cheese", category: "Dairy", quantity: 12, quantity_type: slices, expires: 30 };
 let yogurt = { name: "Yogurt", category: "Dairy", quantity: 12, quantity_type: "oz." };
 
+// Meat
+
+let bacon = { name: "Bacon", category: "Meat",  };
+let sausage = { name: "Sausage", category: "Meat" };
+let sausageLink = { name: "Sausage Link", category: "Meat" };
+let chickenBreast = { name: "Chicken Breast", category: "Meat" , quantity: 2, quantity_type: "breast"};
+let chickenThigh = { name: "Chicken Thigh", category: "Meat",  };
+let wholeChicken = { name: "Whole Chicken", category: "Meat" };
+let groundBeef = { name: "Ground Beef", category: "Meat" };
+let groundBison = { name: "Ground Bison", category: "Meat" };
+
+// Produce
 
 let apple = { name: "Apple", category: "Produce", quantity: 1, quantity_type: "apple" };
 let banana = { name: "Banana", category: "Produce", quantity: 1, quantity_type: "banana" };
@@ -73,11 +85,7 @@ let turnip = { name: "Turnip", category: "Produce", quantity: 1, quantity_type: 
 let rutabaga = { name: "Rutabaga", category: "Produce", quantity: 1, quantity_type: "rutabaga" };
 let swissChard = { name: "Swiss Chard", category: "Produce", quantity: 1, quantity_type: "head" };
 let bokChoy = { name: "Bok Choy", category: "Produce", quantity: 1, quantity_type: "head" };
-let chickenBreast = { name: "Chicken Breast", category: "Meat" , quantity: 2, quantity_type: "breast"};
-let chickenThigh = { name: "Chicken Thigh", category: "Meat",  };
-let wholeChicken = { name: "Whole Chicken", category: "Meat" };
-let groundBeef = { name: "Ground Beef", category: "Meat" };
-let groundBison = { name: "Ground Bison", category: "Meat" };
+
 let pasta = { name: "Pasta", category: "Pasta" };
 let rice = { name: "Rice", category: "Grains" };
 let pastaSauce = { name: "Pasta Sauce", category: "Condiments" };
@@ -113,9 +121,7 @@ let deliTurkey = { name: "Deli Turkey", category: "Deli" };
 let deliHam = { name: "Deli Ham", category: "Deli" };
 let deliRoastBeef = { name: "Deli Roast Beef", category: "Deli" };
 let frenchBread = { name: "French Bread", category: "Bakery" };
-let bacon = { name: "Bacon", category: "Meat" };
-let sausage = { name: "Sausage", category: "Meat" };
-let sausageLink = { name: "Sausage Link", category: "Meat" };
+
 let cumin = { name: "Cumin", category: "Spices" };
 let cardamom = { name: "Cardamom", category: "Spices" };
 let coriander = { name: "Coriander", category: "Spices" };
