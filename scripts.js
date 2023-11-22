@@ -1,4 +1,21 @@
-// Let's start with a list of every ingredient we can think of
+// The User's Deck
+
+let userDeck = [undefined];
+
+function addToDeck(newCard, ing) {
+    userDeck.filter(x => x !== undefined)
+    userDeck.pop(ing)
+    console.log(userDeck)
+}
+
+
+
+
+
+
+
+
+// We'll stick the database at the bottom for now so we can start defining some of the major functions up top.
 
 
 

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./libraries/bootstrap-5.3.2-dist/css/bootstrap.css">
+    <title>Document</title>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="h1">KitchenQuest</p>
+                </div>
+                <div class="col-md-2">
+                    <p class="h2">Pantry</p>
+                </div>
+                <div class="col-md-2">
+                    <p class="h2 text-nowrap">Add Card</p>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main class="container">
+        <div class="row ">
+            <div class="card-header pantry-header">
+                <h5 class="m-1">
+                    <!--Button to collapse the row-->
+                    <button class="h2 btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#produceRow">
+                        Produce!
+                    </button>
+                    <button class="h2 btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#meatsRow">
+                        Meat!
+                    </button>
+                </h5>
+            </div>
+            <!-- This is the Produce Row-->
+            <div class="row gap-1 collapse" id="produceRow">
+                <div class="card col-sm-6 col-md-3 col-lg-2 gap-1 text-center">
+                    <img src="./assets/ingredients/Cheese.png" alt="Cheese" class="card-img-top">
+                    <div class="card-title h5">Cheese</div>
+                    <div class="card-subtitle">
+                        Ready to eat or use in many dishes around the world.
+                    </div>
+                    <div class="card-body">
+                        <a href="#" class="card-link">Add More</a>
+                        <a href="#" class="card-link">Use</a>
+                    </div>
+                </div>
+                <div class="card col-sm-6 col-md-3 col-lg-2 gap-1 text-center">
+                    <img src="./assets/ingredients/Cheese.png" alt="" class="card-img-top">
+                    <div class="card-title h5">Cheese</div>
+                    <div class="card-subtitle">
+                        Ready to eat or use in many dishes around the world.
+                    </div>
+                    <div class="card-body">
+                        <a href="#" class="card-link">Add More</a>
+                        <a href="#" class="card-link">Use</a>
+                    </div>
+                </div>
+                <div class="card col-sm-6 col-md-3 col-lg-2 gap-1 text-center">
+                    <img src="./assets/ingredients/Cheese.png" alt="" class="card-img-top">
+                    <div class="card-title h5">Cheese</div>
+                    <div class="card-subtitle">
+                        Ready to eat or use in many dishes around the world.
+                    </div>
+                    <div class="card-body">
+                        <a href="#" class="card-link">Add More</a>
+                        <a href="#" class="card-link">Use</a>
+                    </div>
+                </div>
+                <div class="card col-sm-6 col-md-3 col-lg-2 gap-1">
+                    <img src="./assets/ingredients/Cheese.png" alt="" class="card-img-top">
+                    <div class="card-title h5">Cheese</div>
+                    <div class="card-subtitle">
+                        Ready to eat or use in many dishes around the world.
+                    </div>
+                    <div class="card-body">
+                        <a href="#" class="card-link">Add More</a>
+                        <a href="#" class="card-link">Use</a>
+                    </div>
+                </div>
+                <div class="card col-sm-6 col-md-3 col-lg-2 gap-1">
+                    <img src="./assets/ingredients/Cheese.png" alt="" class="card-img-top">
+                    <div class="card-title h5">Cheese</div>
+                    <div class="card-subtitle">
+                        Ready to eat or use in many dishes around the world.
+                    </div>
+                    <div class="card-body">
+                        <a href="#" class="card-link">Add More</a>
+                        <a href="#" class="card-link">Use</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Meats row-->
+
+            <div class="row collapse" id="meatsRow">
+                <div class="card col-sm-6 col-md-3 col-lg-2 gap-1 text-center">
+                    <img src="./assets/ingredients/meat.webp" alt="Meat" class="card-img-top">
+                    <div class="card-title h5">Steak</div>
+                    <div class="card-subtitle">
+                        "If you don't like the smell of burning meat, get off the planet."
+                    </div>
+                    <div class="card-body">
+                        <a href="#" class="card-link">Add More</a>
+                        <a href="#" class="card-link">Use</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="./libraries/bootstrap-5.3.2-dist/js/bootstrap.bundle.js">
+
+        </script>
+    </main>
+</body>
+</html>
