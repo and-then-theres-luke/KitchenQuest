@@ -37,6 +37,17 @@
             </div>
             <!-- This is the Produce Row-->
             <div class="row gap-1 collapse" id="produceRow">
+                <div class="card col-sm-6 col-md-3 col-lg-2 gap-1 text-center" onhover=>
+                    <img src="./assets/ingredients/meat.webp" alt="Meat" class="card-img-top">
+                    <div class="card-title h5">Steak</div>
+                    <div class="card-subtitle">
+                        "If you don't like the smell of burning meat, get off the planet."
+                    </div>
+                    <div class="card-body">
+                        <a href="#" class="card-link">Add More</a>
+                        <a href="#" class="card-link">Use</a>
+                    </div>
+                </div>
                 <div class="card col-sm-6 col-md-3 col-lg-2 gap-1 text-center">
                     <img src="./assets/ingredients/Cheese.png" alt="Cheese" class="card-img-top">
                     <div class="card-title h5">Cheese</div>
@@ -97,11 +108,14 @@
             <!-- Meats row-->
 
             <div class="row collapse" id="meatsRow">
-                <div class="card col-sm-6 col-md-3 col-lg-2 gap-1 text-center">
+                <div class="card col-sm-6 col-md-3 col-lg-2 gap-1 text-center" data-bs-toggle="collapse" data-bs-target="#extra-content">
                     <img src="./assets/ingredients/meat.webp" alt="Meat" class="card-img-top">
                     <div class="card-title h5">Steak</div>
                     <div class="card-subtitle">
                         "If you don't like the smell of burning meat, get off the planet."
+                    </div>
+                    <div class="card-body collapse" id="extra-content">
+                        <p>some other fun facts about meat.</p>
                     </div>
                     <div class="card-body">
                         <a href="#" class="card-link">Add More</a>
@@ -110,9 +124,8 @@
                 </div>
             </div>
         </div>
-        <script src="./libraries/bootstrap-5.3.2-dist/js/bootstrap.bundle.js">
-
-        </script>
+        <script src="./libraries/bootstrap-5.3.2-dist/js/bootstrap.bundle.js"></script>
+        <script src="./scripts.js"></script>
     </main>
 </body>
 </html>

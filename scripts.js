@@ -9,6 +9,15 @@ function addToDeck(newCard, ing) {
 }
 
 
+var minCard = "card col-sm-6 col-md-3 col-lg-2 gap-1 text-center";
+var maxCard = "card col-12 gap-1 text-center";
+
+document.querySelector(".card").class = minCard;
+console.log(document.querySelector(".card"));
+console.log(document.querySelector(".card").class);
+// I need to make a function to grow the card of whatever gets passed in
+
+// I need to make the function that causes cards to grow and shrink
 
 
 
@@ -25,7 +34,7 @@ let egg12 = { name: "A Dozen Eggs", category: "Dairy", quantity: 12, quantity_ty
 let almondMilk = { name: "Almond Milk", category: "Dairy", quantity: 64, quantity_type: "fl. oz.", expires: 30 };
 let butter = { name: "Butter", category: "Dairy", quantity: 1, quantity_type: "stick", expires: 180} // how am I going to log it when I need to convert one stick of butter into individual 
 let butter_Tbsp = {name: "A Tablespoon of Butter", category: "Dairy", quantity: 1, quantity_type: "Tablespoon", expires: 180};
-let chedder_cheese_sliced = { name: "Sliced Cheddar Cheese", category: "Dairy", quantity: 12, quantity_type: slices, expires: 30 };
+let chedder_cheese_sliced = { name: "Sliced Cheddar Cheese", category: "Dairy", quantity: 12, quantity_type: "slices", expires: 30 };
 let yogurt = { name: "Yogurt", category: "Dairy", quantity: 12, quantity_type: "oz." };
 
 // Meat
