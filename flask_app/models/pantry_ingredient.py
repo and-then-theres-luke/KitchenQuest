@@ -1,6 +1,8 @@
 
 from flask_app import app
 from flask_app.config.mysqlconnection import connectToMySQL
+from flask_app.models import ingredient, user
+from datetime import date, timedelta
 from flask import flash, session
 # The above is used when we do login registration, flask-bcrypt should already be in your env check the pipfile
 
@@ -9,112 +11,155 @@ from flask import flash, session
 class Pantry_Ingredient:
     db = "kitchenquest" #which database are you using for this project
     def __init__(self, data):
-        self.id = data['id']                # ID for an ingredient in the pantry
-        self.user_id = data['user_id']      # ID for the user whose pantry that ingredient is in
-        self.ingredient_id = data['user_id']
+        self.id = data['id']                        # ID for an ingredient in the pantry
+        self.user_id = data['user_id']              # ID for the user whose pantry that ingredient is in
+        self.ingredient_id = data['ingredient_id']  # ID for the actual ingredient data
+        self.current_hp = data['current_hp']
+        self.max_hp = data['max_hp']
+        self.expiration_date = data['created_on'] + timedelta(data['expires']) # created_at(day) minus expiration I know it's pseudo code, shut up.
+        self.ingredient_model = None                # When we create the pantry_ingredient we will as part of the creation process be attaching a model of the "ideal" ingredient to the one in the pantry. This is where we will get our unit type, max hp, etc. 
+        self.expires = None
         # What changes need to be made above for this project?
         #What needs to be added here for class association?
+        # When a new pantry ingredient is created, we construct it using the same information from ingredients        
 
 
-
-    # Create Users Models 
+    # Create Pantry Ingredients Model 
     @classmethod
-    def create_user(cls, data):                 # Returns TRUE or FALSE
-        if not cls.validate_new_user(data):
-            return False
+    def add_ingredient_to_pantry_by_id(cls, data):                 # Returns TRUE or FALSE
         query = """
-            INSERT INTO users 
+            INSERT INTO pantry_ingredients 
                 (
-                    first_name, 
-                    last_name, 
-                    email, 
-                    password
+                    user_id, 
+                    ingredient_id,
+                    current_hp,
+                    max_hp,
+                    expiration_date
                 ) 
             VALUES 
                 (
-                    %(first_name)s, 
-                    %(last_name)s, 
-                    %(email)s, 
-                    %(password)s
+                    %(user_id)s,
+                    %(ingredient_id)s,
+                    %(current_hp)s,
+                    %(max_hp)s,
+                    %(expiration_date)s
                 )
             ;
             """
+        model_ingredient = ingredient.Ingredient.get_ingredient_by_id(data['ingredient_id'])
         new_data = {
-            'first_name' : data['first_name'],
-            'last_name' : data['last_name'],
-            'email' : data['email'],
-            'password' : bcrypt.generate_password_hash(data['password'])
+            'user_id' : data['user_id'],
+            'ingredient_id' : data['ingredient_id'],
+            'current_hp' : model_ingredient.max_hp,
+            'max_hp' : model_ingredient.max_hp,
+            'expiration_date' : date.today() + timedelta(model_ingredient.days_to_expire)
         }
-        new_user = connectToMySQL(cls.db).query_db(query, new_data)
-        new_user = User.get_user_by_id(new_user)
-        session['user_id'] = new_user.id
-        session['name'] = f"""{new_user.first_name} {new_user.last_name}"""
+        if not connectToMySQL(cls.db).query_db(query, new_data):
+            return False
         return True
+    
+    @classmethod
+    def add_ingredient_to_pantry_by_name(cls, data):                 # Returns TRUE or FALSE
+        query = """
+            INSERT INTO pantry_ingredients 
+                (
+                    user_id, 
+                    ingredient_id,
+                    current_hp,
+                    max_hp,
+                    expiration_date
+                ) 
+            VALUES 
+                (
+                    %(user_id)s,
+                    %(ingredient_id)s,
+                    %(current_hp)s,
+                    %(max_hp)s,
+                    %(expiration_date)s
+                )
+            ;
+            """
+        model_ingredient = ingredient.Ingredient.get_ingredient_by_id(data['ingredient_id'])
+        new_data = {
+            'user_id' : data['user_id'],
+            'ingredient_id' : data['ingredient_id'],
+            'current_hp' : model_ingredient.max_hp,
+            'max_hp' : model_ingredient.max_hp,
+            'expiration_date' : date.today() + timedelta(model_ingredient.days_to_expire)
+        }
+        if not connectToMySQL(cls.db).query_db(query, new_data):
+            return False
+        return True
+    
+
 
 
 
     # Read Users Models
-    @classmethod
-    def get_all_users(cls):                     # Returns a list of users, if the query fails returns an empty list
-        query = """
-            SELECT * 
-            FROM users
-            ;
-            """
-        results = connectToMySQL(cls.db).query_db(query) # The query always returns a list of dictionaries, think [{...},{...}] and these entries are locations in memory.
-        users = []
-        for person in results:
-            users.append(cls(person))
-        return users
     
     @classmethod
-    def get_user_by_id(cls, id):                # Returns a user object or false
+    def get_pantry_ingredient_by_id(cls,pantry_ingredient_id):
         data = {
-            'id' : id
+            'id' : pantry_ingredient_id
         }
         query = """
-            SELECT *
-            FROM users
-            WHERE id = %(id)s
-            ;
+        SELECT *
+        FROM pantry_ingredients
+        WHERE id = %(id)s
+        ;
+        """
+        results = connectToMySQL(cls.db).query_db(query,data)
+        one_pantry_ingredient = cls(results[0])
+        return one_pantry_ingredient
+    
+    @classmethod
+    def get_pantry_deck_by_user_id(cls, user_id):
+        data = {
+            'user_id' : user_id
+        }
+        query = """
+        SELECT *
+        FROM pantry_ingredients
+        WHERE pantry_ingredients.user_id = %(user_id)s
+        ;
         """
         results = connectToMySQL(cls.db).query_db(query, data)
-        if not results:
-            return False
-        one_user = cls(results[0])
-        return one_user
-    
-    @classmethod
-    def get_user_by_email(cls,email):           # Returns a user object or false
-        data = {
-            'email' : email
-        }
-        query = """
-            SELECT * 
-            FROM users 
-            WHERE email = %(email)s
-            ;
-        """
-        one_user = connectToMySQL(cls.db).query_db(query, data)
-        if not one_user:
-            return False
-        return cls(one_user[0])
+        one_pantry_deck = []
+        for row in results:
+            one_pantry_deck.append(cls(row))
+        return one_pantry_deck
 
 
     # Update Users Models
     @classmethod
-    def update_user(cls, data):              # Returns nothing
+    def reduce_hit_points(cls,hit_points,pantry_ingredient_id):
+        current_hp = (cls.get_pantry_ingredient_by_id(pantry_ingredient_id)).current_hp - hit_points
+        data = {
+            'id' : pantry_ingredient_id,
+            'current_hp' : current_hp
+        }
         query = """
-            UPDATE users
-            SET first_name = %(first_name)s, 
-            last_name = %(last_name)s, 
-            email = %(email)s,
-            password = %(password)s,
-            WHERE id = %(id)s
-            ;
+        UPDATE pantry_ingredients
+        SET current_hp = %(current_hp)s
+        WHERE id = %(id)s
         """
         connectToMySQL(cls.db).query_db(query, data)
         return
+    
+    @classmethod
+    def update_pantry_ingredient_by_id(cls, pantry_ingredient_id):
+        data = {
+            'pantry_ingredient_id' : pantry_ingredient_id
+        }
+        query = """
+        SELECT *
+        FROM pantry_ingredients
+        WHERE id = %(pantry_ingredient_id)s
+        ;
+        """
+        results = connectToMySQL(cls.db).query_db(query, data)
+        one_pantry_ingredient = cls(results[0])
+        return one_pantry_ingredient
 
 
     # Delete Users Models
