@@ -1,0 +1,19 @@
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form button {
+    width: 200px;
+}
+
+
+/* Dashboard Styling */
+
+
+.dashboard_main {
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+    gap: 20px;
+}

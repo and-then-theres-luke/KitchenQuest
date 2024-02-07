@@ -1,19 +1,31 @@
 from flask_app import app
 from flask import render_template, redirect, request, session
-from flask_app.models import user # import entire file, rather than class, to avoid circular imports
-# As you add model files add them the the import above
-# This file is the second stop in Flask's thought process, here it looks for a route that matches the request
+from flask_app.models import user 
 
 # Create Users Controller
-
+@app.post("/register")
+def register_frontend():
+    if not user.User.create_user(request.form):
+        return render_template("login.html")
+    return redirect("/dashboard")
+    
 
 
 # Read Users Controller
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return redirect("/login")
 
+@app.route("/login")
+def login_frontend():
+    return render_template("login.html")
+
+@app.route("/dashboard")
+def dashboard_frontend():
+    if 'user_id' not in session:
+        return redirect('/login')
+    return render_template("dashboard.html")
 
 # Update Users Controller
 

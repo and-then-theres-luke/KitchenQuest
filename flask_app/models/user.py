@@ -1,6 +1,7 @@
 
 from flask_app import app
 from flask_app.config.mysqlconnection import connectToMySQL
+from flask_app.models import comment, pantry_ingredient, recipe
 from flask import flash, session
 import re
 from flask_bcrypt import Bcrypt
@@ -18,11 +19,11 @@ class User:
         self.last_name = data['last_name']
         self.email = data['email']
         self.password = data['password']
-        self.created_at = data['created_at']
-        self.updated_at = data['updated_at']
         self.pantry_deck = None
         self.saved_recipes = None
         self.comments = None
+        self.created_at = data['created_at']
+        self.updated_at = data['updated_at']
         # What changes need to be made above for this project?
         #What needs to be added here for class association?
 
@@ -93,6 +94,9 @@ class User:
         if not results:
             return False
         one_user = cls(results[0])
+        one_user.comments = comment.Comment.get_all_comments_by_user(id)
+        one_user.pantry_deck = pantry_ingredient.Pantry_Ingredient.get_pantry_deck_by_user_id(id)
+        one_user.saved_recipes = recipe.Recipe.get_all_recipes_by_user_id(id)
         return one_user
     
     @classmethod

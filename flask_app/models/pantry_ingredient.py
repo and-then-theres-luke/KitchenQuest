@@ -19,6 +19,8 @@ class Pantry_Ingredient:
         self.expiration_date = data['created_on'] + timedelta(data['expires']) # created_at(day) minus expiration I know it's pseudo code, shut up.
         self.ingredient_model = None                # When we create the pantry_ingredient we will as part of the creation process be attaching a model of the "ideal" ingredient to the one in the pantry. This is where we will get our unit type, max hp, etc. 
         self.expires = None
+        self.created_at = data['created_at']
+        self.updated_at = data['updated_at']
         # What changes need to be made above for this project?
         #What needs to be added here for class association?
         # When a new pantry ingredient is created, we construct it using the same information from ingredients        

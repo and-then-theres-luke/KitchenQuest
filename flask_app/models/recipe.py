@@ -15,6 +15,8 @@ class Recipe:
         self.recipe_ingredients = []
         self.optional_ingredients = []
         self.comments = []
+        self.created_at = data['created_at']
+        self.updated_at = data['updated_at']
         
     # Create Recipe Models
     @classmethod
