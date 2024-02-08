@@ -94,7 +94,7 @@ class User:
         if not results:
             return False
         one_user = cls(results[0])
-        one_user.comments = comment.Comment.get_all_comments_by_user(id)
+        one_user.comments = comment.Comment.get_all_comments_by_user_id(id)
         one_user.pantry_deck = pantry_ingredient.Pantry_Ingredient.get_pantry_deck_by_user_id(id)
         one_user.saved_recipes = recipe.Recipe.get_all_recipes_by_user_id(id)
         return one_user
@@ -189,11 +189,3 @@ class User:
         session['user_id'] = one_user.id
         session['name'] = f"""{one_user.first_name} {one_user.last_name}"""
         return one_user
-    
-    @staticmethod
-    def check_is_logged_in():
-        is_valid = True
-        if 'user_id' not in session:
-            flash("Please login to access this page.", "access")
-            is_valid = False
-        return is_valid

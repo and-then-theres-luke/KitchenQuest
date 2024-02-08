@@ -89,6 +89,35 @@ class Recipe:
         return all_recipes
     
     @classmethod
+    def get_all_recipes_by_user_id(cls, user_id):
+        data = {
+            'id' : user_id
+        }
+        query = """
+        SELECT 
+            recipes.id,
+            recipes.name,
+            recipes.image_url,
+            recipes.instructions,
+            recipes.created_at,
+            recipes.updated_at
+        FROM users
+        LEFT JOIN saved_recipes
+        ON users.id = saved_recipes.user_id
+        LEFT JOIN recipes
+        ON saved_recipes.recipe_id = recipes.id
+        WHERE users.id = %(id)s
+        ;
+        """
+        results = connectToMySQL(cls.db).query_db(query,data)
+        all_saved_recipes = []
+        if not results:
+            return all_saved_recipes
+        for row in results:
+            all_saved_recipes.append(cls(row))
+        return all_saved_recipes
+
+    @classmethod
     def recipe_search(cls, search_string):
         search_string = search_string.lower()
         all_recipes = cls.get_all_recipes()

@@ -3,6 +3,11 @@ form {
     flex-direction: column;
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
 form button {
     width: 200px;
 }
