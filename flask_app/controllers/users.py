@@ -15,17 +15,34 @@ def register_frontend():
 
 @app.route('/')
 def index():
-    return redirect("/login")
+    if 'user_id' not in session:
+        return redirect("/login")
+    return redirect('/dashboard')
 
 @app.route("/login")
 def login_frontend():
-    return render_template("login.html")
+    if 'user_id' not in session:
+        return render_template("login.html")
+    return redirect('/dashboard')
+
+@app.route("/login/process", methods=['POST'])
+def login_process():
+    one_user = user.User.login(request.form)
+    if not one_user:
+        return redirect('/login')
+    return redirect('/dashboard')
 
 @app.route("/dashboard")
 def dashboard_frontend():
     if 'user_id' not in session:
         return redirect('/login')
-    return render_template("dashboard.html")
+    one_user = user.User.get_user_by_id(session['user_id'])
+    return render_template("dashboard.html", one_user = one_user)
+
+@app.route('/logout')
+def logout_frontend():
+    session.clear()
+    return redirect('/')
 
 # Update Users Controller
 

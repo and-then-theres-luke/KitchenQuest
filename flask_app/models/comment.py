@@ -62,3 +62,24 @@ class Comment:
         """
         results = connectToMySQL(cls.db).query_db(query, data)
         return
+    
+    @classmethod
+    def get_all_comments_by_user_id(cls, user_id):
+        data = {
+            'id' : user_id
+        }
+        query = """
+        SELECT *
+        FROM users
+        LEFT JOIN comments
+        ON users.id = comments.user_id
+        WHERE id = %(id)s
+        ;
+        """
+        all_users_comments = []
+        results = connectToMySQL(cls.db).query_db(query, data)
+        if not results:
+            return False
+        for row in results:
+            all_users_comments.append(cls(row))
+        return all_users_comments

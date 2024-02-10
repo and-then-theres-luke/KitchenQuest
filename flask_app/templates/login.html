@@ -9,15 +9,29 @@
 <body>
     <h1>Welcome to KitchenQuest!</h1>
     <h2>Please login or make an account to continue...</h2>
+    <!-- Flash messages for registration errors -->
+    {% with messages = get_flashed_messages(category_filter = ['register']) %}
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color:red">{{message}}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <!-- Flash messages for when a user tries to access pages without being logged in -->
+    {% with messages = get_flashed_messages(category_filter = ['login']) %}
+        {% for message in messages %}
+            <p style="color:red">{{message}}</p>
+        {% endfor %}
+    {% endwith %}
     <div>
         <h3>Login</h3>
-        <form action="/login">
+        <form action="/login/process" method="POST">
             <label>Email: <input type="email" name="email"></label>
             <label>Password: <input type="password" name="password"></label>
             <button>Submit</button>
         </form>
         <h3>Register</h3>
-        <form action="/register">
+        <form action="/register" method="POST">
             <label>First Name:<input type="text" name="first_name"></label>
             <label>Last Name:<input type="text" name="last_name"></label>
             <label>Email:<input type="email" name="email"></label>
