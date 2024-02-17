@@ -1,7 +1,9 @@
 
 from flask_app import app
 from flask_app.config.mysqlconnection import connectToMySQL
-from flask import flash, session
+from flask import flash, session, request
+import requests
+from flask_app.api_key import API_KEY
 import re
 
 
@@ -93,35 +95,13 @@ class Ingredient:
     
     @classmethod
     def get_ingredient_by_name(cls, ingredient_name):
-        data = {
-            'name' : ingredient_name
-        }
-        query = """
-        SELECT *
-        FROM ingredients
-        WHERE name = %(name)s
-        ;
-        """
-        results = connectToMySQL(cls.db).query_db(query, data)
-        one_ingredient = cls(results[0])
+        res = requests.get()
         return one_ingredient
-            
-
+    
     @classmethod
-    def get_ingredient_by_id(cls, id):
-        data = {
-            'id' : id
-        }
-        query = """
-            SELECT *
-            FROM ingredients
-            WHERE id = %(id)s
-            ;
-        """
-        results = connectToMySQL(cls.db).query_db(query, data)
-        if not results:
-            return False
-        one_ingredient = cls(results[0])
+    def get_ingredient_by_id_test(cls, id):
+        res = requests.get("https://api.spoonacular.com/food/ingredients/" + id + "/information?apiKey=" + API_KEY)
+        one_ingredient = res.json()
         return one_ingredient
     
 

@@ -17,8 +17,7 @@ class Pantry_Ingredient:
         self.current_hp = data['current_hp']
         self.max_hp = data['max_hp']
         self.expiration_date = data['expiration_date'] # created_at(day) minus expiration I know it's pseudo code, shut up.
-        self.ingredient_model = None                # When we create the pantry_ingredient we will as part of the creation process be attaching a model of the "ideal" ingredient to the one in the pantry. This is where we will get our unit type, max hp, etc. 
-        self.expires = None
+        self.isFrozen = data['isFrozen']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
 
@@ -33,7 +32,8 @@ class Pantry_Ingredient:
                     ingredient_id,
                     current_hp,
                     max_hp,
-                    expiration_date
+                    expiration_date,
+                    isFrozen
                 ) 
             VALUES 
                 (
@@ -41,51 +41,34 @@ class Pantry_Ingredient:
                     %(ingredient_id)s,
                     %(current_hp)s,
                     %(max_hp)s,
-                    %(expiration_date)s
+                    %(expiration_date)s,
+                    %(isFrozen)s
                 )
             ;
             """
-        model_ingredient = ingredient.Ingredient.get_ingredient_by_id(data['ingredient_id'])
-        new_data = {
-            'user_id' : data['user_id'],
-            'ingredient_id' : data['ingredient_id'],
-            'current_hp' : model_ingredient.max_hp,
-            'max_hp' : model_ingredient.max_hp,
-            'expiration_date' : date.today() + timedelta(model_ingredient.days_to_expire)
-        }
-        if not connectToMySQL(cls.db).query_db(query, new_data):
+        if not connectToMySQL(cls.db).query_db(query, data):
             return False
         return True
     
 
-    # Read Users Models
+    # Read Pantry Ingredient Models
+    
+    
     
     @classmethod
-    def get_pantry_ingredient_by_id(cls,pantry_ingredient_id):
+    def get_pantry_ingredient_by_pantry_ingredient_id(cls,pantry_ingredient_id):
         data = {
             'id' : pantry_ingredient_id
         }
         query = """
         SELECT *
         FROM pantry_ingredients
-        JOIN ingredients
-        ON pantry_ingredients.ingredient_id = ingredients.id
         WHERE pantry_ingredients.id = %(id)s
         ;
         """
-        results = connectToMySQL(cls.db).query_db(query,data)
-        one_pantry_ingredient = cls(results[0])
-        one_pantry_ingredient_data = {
-            'id' : results[0]['pantry_ingredients.id'],
-            'user_id' : results[0]['user_id'],
-            'ingredient_id' : results[0]['pantry_ingredients.id'],
-            'current_hp' : results[0]['current_hp'],
-            'max_hp' : results[0]['pantry_ingredients.max_hp'],
-            'expiration_date' : results[0]['expiration_date'],
-            'created_at' : results[0]['pantry_ingredients.created_at'],
-            'updated_at' : results[0]['pantry_ingredients.updated_at']
-        }
-        
+        one_pantry_ingredient = connectToMySQL(cls.db).query_db(query, data)
+        if not one_pantry_ingredient:
+            return False
         return one_pantry_ingredient
     
     @classmethod
@@ -96,7 +79,7 @@ class Pantry_Ingredient:
         query = """
         SELECT *
         FROM pantry_ingredients
-        WHERE pantry_ingredients.user_id = %(user_id)s
+        WHERE user_id = %(user_id)s
         ;
         """
         results = connectToMySQL(cls.db).query_db(query, data)
@@ -107,44 +90,59 @@ class Pantry_Ingredient:
 
     # Update Users Models
     @classmethod
-    def reduce_hit_points(cls,hit_points,pantry_ingredient_id):
-        current_hp = (cls.get_pantry_ingredient_by_id(pantry_ingredient_id)).current_hp - hit_points
+    def reduce_hit_points(cls,hits,pantry_ingredient_id):
         data = {
             'id' : pantry_ingredient_id,
-            'current_hp' : current_hp
+            'hits' : hits
         }
         query = """
         UPDATE pantry_ingredients
-        SET current_hp = %(current_hp)s
+        SET current_hp = (current_hp - %(hits)s)
         WHERE id = %(id)s
         """
         connectToMySQL(cls.db).query_db(query, data)
         return
-
+    
     @classmethod
-    def update_pantry_ingredient_by_id(cls, pantry_ingredient_id):
+    def freeze_or_defrost_ingredient(cls, pantry_ingredient_id, isFrozen):
         data = {
-            'pantry_ingredient_id' : pantry_ingredient_id
+            'id' : pantry_ingredient_id
         }
         query = """
-        SELECT *
-        FROM pantry_ingredients
-        WHERE id = %(pantry_ingredient_id)s
+        UPDATE pantry_ingredients
+        SET isFrozen = 1
+        WHERE id = %(id)s
         ;
-        """
-        results = connectToMySQL(cls.db).query_db(query, data)
-        one_pantry_ingredient = cls(results[0])
-        return one_pantry_ingredient
-
-
-    # Delete Users Models
-    @classmethod
-    def delete_user(cls, data):     # Returns nothing
-        query = """
-            DELETE FROM users
-            WHERE id = %(id)s;
         """
         connectToMySQL(cls.db).query_db(query, data)
         return
 
+
+    # Delete Users Models
+    @classmethod
+    def delete_pantry_ingredient_by_pantry_ingredient_id(cls,pantry_ingredient_id):
+        query = """
+        DELETE FROM pantry_ingredients
+        WHERE id - %(id)s
+        ;
+        """
+        data = {
+            'id' : pantry_ingredient_id
+        }
+        connectToMySQL(cls.db).query_db(query, data)
+
     # Validation Methods
+    @staticmethod
+    def validate_new_pantry_ingredient(data):
+        isValid = True
+        if data['max_hp'] <= 0:
+            flash("Your ingredient needs at least one hit point before you can add it to your pantry deck. Try again.","new_ingredient")
+            isValid = False
+        if data['expiration_date'] < date.today():
+            flash("Expiration date cannot be in the future.","new_ingredient")
+            isValid = False
+        return isValid
+    
+    
+        
+        

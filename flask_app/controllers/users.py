@@ -1,6 +1,7 @@
 from flask_app import app
 from flask import render_template, redirect, request, session
-from flask_app.models import user 
+from flask_app.models import user, ingredient
+import requests
 
 # Create Users Controller
 @app.post("/register")
@@ -43,6 +44,9 @@ def dashboard_frontend():
 def logout_frontend():
     session.clear()
     return redirect('/')
+
+
+    
 
 # Update Users Controller
 

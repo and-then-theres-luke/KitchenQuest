@@ -3,6 +3,8 @@ from flask_app.config.mysqlconnection import connectToMySQL
 from flask_app.models import ingredient, user, pantry_ingredient
 from datetime import date, timedelta
 from flask import flash, session
+from flask_app.api_key import API_KEY
+import requests
 import re
 
 
@@ -118,16 +120,14 @@ class Recipe:
         return all_saved_recipes
 
     @classmethod
-    def recipe_search(cls, search_string):
-        search_string = search_string.lower()
-        all_recipes = cls.get_all_recipes()
-        search_results = []
-        for one_recipe in all_recipes:
-            result = re.search(search_string, one_recipe.name)
-            if result == False:
-                pass
-            else:
-                search_results.append(one_recipe)
+    def recipe_search_by_ingredients(cls, search_string):
+        search_string.replace(" ", "+")
+        res = requests.get("""
+                           https://api.spoonacular.com/recipes/findByIngredients
+                           ?ingredients=" + {search_string} +
+                           "&apiKey=" + {API_KEY}
+                           """ )
+        search_results = res.json()
         return search_results
     
     # Update Recipe Methods
