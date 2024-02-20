@@ -1,22 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="../static/js/script.js" defer></script>
-    <title>KitchenQuest</title>
-</head>
-<body>
-    <label>Search for What? <input type="text" id="search_string"></label>
-    <button onclick="ingredient_lookup(document.querySelector('#ingredient_search_results'), search_string.value)">Hit the button to do the thing.</button>
-    <table id="ingredient_search_results">
-        <thead>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Image</th>
-            <th>Actions</th>
-        </thead>
-        <tbody></tbody>
-    </table>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../static/css/style.css" />
+        <script src="../static/js/script.js" defer></script>
+        <title>KitchenQuest</title>
+    </head>
+    <body>
+        <div class="header">
+            <div class="header-left">
+                <h1>KitchenQuest</h1>
+                <p>Track Ingredients | Fight Bosses | Eat Well</p>
+            </div>
+            <div class="header-right">
+                <a href="#">Dashboard</a>
+                <a href="#">Spellbook</a>
+                <a href="#">Boss Menu</a>
+            </div>
+        </div>
+        <main>
+            <label
+                >Search for What? <input type="text" id="search_string"
+            /></label>
+            <button
+                onclick="ingredient_lookup(document.querySelector('#ingredient_search_results'), search_string.value)"
+            >
+                Search
+            </button>
+            <table id="ingredient_search_results">
+                <thead>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </main>
+    </body>
 </html>
