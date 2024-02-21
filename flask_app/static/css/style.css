@@ -50,3 +50,8 @@ body {
     background-repeat: repeat-x;
     background-color: #241d2c;
 }
+
+main {
+    background-color: white;
+    height: auto;
+}
