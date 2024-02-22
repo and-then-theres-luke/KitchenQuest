@@ -1,45 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/style.css">
-    <title>KitchenQuest</title>
-</head>
-<body>
-    <div class="header">
-        <h1>KitchenQuest</h1>
-        <div>
-            <p>Logout</p>
-            <p>View Pantry Deck</p>
-            <p>View Calendar</p>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../static/css/style.css" />
+        <title>KitchenQuest</title>
+    </head>
+    <body>
+        <div class="header">
+            <div class="header-left">
+                <h1>KitchenQuest</h1>
+                <p>Track Ingredients | Fight Bosses | Eat Well</p>
+            </div>
+            <div class="header-right">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/spellbook">Spellbook</a>
+                <a href="/recipes">Boss Menu</a>
+            </div>
         </div>
-    </div>
-    <main class="dashboard_main">
-        <div class="dashboard_left_col">
-            <div class="deck_quickview">
-                <div class="deck_quickview_header">
-                    <h2>Pantry Deck Quick View</h2>
+        <main class="dashboard_main">
+            <div class="dashboard_left_col">
+                <div class="deck_quickview">
+                    <div class="deck_quickview_header">
+                        <h2>Pantry Deck Quick View</h2>
+                    </div>
+                    <div class="deck_quickview_body">
+                        <!-- Throw some django in here to see the pantry deck sorted by expiration date -->
+                    </div>
                 </div>
-                <div class="deck_quickview_body">
-                    <!-- Throw some django in here to see the pantry deck sorted by expiration date -->
+                <div class="quick_add_to_pantry">
+                    <div>
+                        <h2>Quick Add To Pantry</h2>
+                        <!-- How should I order this? Probably by populating a list with the ingredients they most recently bought -->
+                    </div>
                 </div>
             </div>
-            <div class="quick_add_to_pantry">
+            <div class="dashboard_right_col">
+                <h2>Top Recipes</h2>
                 <div>
-                    <h2>Quick Add To Pantry</h2>
-                    <!-- How should I order this? Probably by populating a list with the ingredients they most recently bought -->
+                    <!-- Let's show the most saved recipes -->
                 </div>
+                <p>See All Recipes</p>
+                <a href="/ingredient/search">Ingredient Search</a>
             </div>
-        </div>
-        <div class="dashboard_right_col">
-            <h2>Top Recipes</h2>
-            <div>
-                <!-- Let's show the most saved recipes -->
-            </div>
-            <p>See All Recipes</p>
-            <a href="/ingredient/search">Ingredient Search</a>
-        </div>
-    </main>
-</body>
+        </main>
+    </body>
 </html>

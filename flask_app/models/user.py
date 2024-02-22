@@ -1,7 +1,7 @@
 
 from flask_app import app
 from flask_app.config.mysqlconnection import connectToMySQL
-from flask_app.models import comment, pantry_ingredient, recipe
+from flask_app.models import spell, recipe
 from flask import flash, session
 import re
 from flask_bcrypt import Bcrypt
@@ -19,9 +19,8 @@ class User:
         self.last_name = data['last_name']
         self.email = data['email']
         self.password = data['password']
-        self.pantry_deck = None
-        self.saved_recipes = None
-        self.comments = None
+        self.spellbook = []
+        self.saved_recipes = []
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
         # What changes need to be made above for this project?
@@ -88,15 +87,17 @@ class User:
             SELECT *
             FROM users
             WHERE id = %(id)s
-            ;
+            LEFT JOIN spells
+            ON users.id = spells.user_id
+            LEFT JOIN saved_recipes
+            ON users.id = saved_recipes.user_id;
         """
         results = connectToMySQL(cls.db).query_db(query, data)
         if not results:
             return False
         one_user = cls(results[0])
-        one_user.comments = comment.Comment.get_all_comments_by_user_id(id)
-        one_user.pantry_deck = pantry_ingredient.Pantry_Ingredient.get_pantry_deck_by_user_id(id)
-        one_user.saved_recipes = recipe.Recipe.get_all_recipes_by_user_id(id)
+        one_user.spellbook = spell.Spell.get_spellbook_by_user_id(id)
+        one_user.saved_recipes = recipe.Recipe.get_all_saved_recipes_by_user_id(id)
         return one_user
     
     @classmethod
@@ -124,7 +125,7 @@ class User:
             SET first_name = %(first_name)s, 
             last_name = %(last_name)s, 
             email = %(email)s,
-            password = %(password)s,
+            password = %(password)s
             WHERE id = %(id)s
             ;
         """
@@ -135,6 +136,9 @@ class User:
     # Delete Users Models
     @classmethod
     def delete_user(cls, data):     # Returns nothing
+        if session['user_id'] != data['user_id']:
+            flash("You don't have permissions to delete this account.", "delete_account")
+            return
         query = """
             DELETE FROM users
             WHERE id = %(id)s;

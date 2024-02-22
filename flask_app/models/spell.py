@@ -8,30 +8,34 @@ from flask import flash, session
 
 
 
-class Pantry_Ingredient:
+class Spell:
     db = "kitchenquest" 
     def __init__(self, data):
         self.id = data['id']                        # ID for an ingredient in the pantry
         self.user_id = data['user_id']              # ID for the user whose pantry that ingredient is in
-        self.ingredient_id = data['ingredient_id']  # ID for the actual ingredient data
-        self.current_hp = data['current_hp']
-        self.max_hp = data['max_hp']
+        self.api_ingredient_id = data['api_ingredient_id']  # ID for the actual ingredient data according to api
+        self.current_charges = data['current_charges']
+        self.max_charges = data['max_charges']
         self.expiration_date = data['expiration_date'] # created_at(day) minus expiration I know it's pseudo code, shut up.
         self.isFrozen = data['isFrozen']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
 
 
+
+
     # Create Pantry Ingredients Model 
     @classmethod
-    def add_ingredient_to_pantry_by_id(cls, data):                 # Returns TRUE or FALSE
+    def create_spell(cls, data):                 # Returns TRUE or FALSE
+        if not cls.validate_new_spell(data):
+            return False
         query = """
-            INSERT INTO pantry_ingredients 
+            INSERT INTO spells 
                 (
                     user_id, 
                     ingredient_id,
-                    current_hp,
-                    max_hp,
+                    current_charges,
+                    max_charges,
                     expiration_date,
                     isFrozen
                 ) 
@@ -39,8 +43,8 @@ class Pantry_Ingredient:
                 (
                     %(user_id)s,
                     %(ingredient_id)s,
-                    %(current_hp)s,
-                    %(max_hp)s,
+                    %(current_charges)s,
+                    %(max_charges)s,
                     %(expiration_date)s,
                     %(isFrozen)s
                 )
@@ -56,48 +60,50 @@ class Pantry_Ingredient:
     
     
     @classmethod
-    def get_pantry_ingredient_by_pantry_ingredient_id(cls,pantry_ingredient_id):
+    def get_spell_by_id(cls,spell_id):
         data = {
-            'id' : pantry_ingredient_id
+            'id' : spell_id
         }
         query = """
         SELECT *
-        FROM pantry_ingredients
-        WHERE pantry_ingredients.id = %(id)s
+        FROM spells
+        WHERE spells.id = %(id)s
         ;
         """
-        one_pantry_ingredient = connectToMySQL(cls.db).query_db(query, data)
-        if not one_pantry_ingredient:
+        one_spell = connectToMySQL(cls.db).query_db(query, data)
+        if not one_spell:
             return False
-        return one_pantry_ingredient
+        return one_spell
     
     @classmethod
-    def get_pantry_deck_by_user_id(cls, user_id):
+    def get_spellbook_by_user_id(cls, user_id):
         data = {
             'user_id' : user_id
         }
         query = """
         SELECT *
-        FROM pantry_ingredients
+        FROM spells
         WHERE user_id = %(user_id)s
         ;
         """
         results = connectToMySQL(cls.db).query_db(query, data)
-        one_pantry_deck = []
+        one_spellbook = []
         for row in results:
-            one_pantry_deck.append(cls(row))
-        return one_pantry_deck
+            one_spellbook.append(cls(row))
+        return one_spellbook
 
-    # Update Users Models
+    # Update Spellbook Models
     @classmethod
-    def reduce_hit_points(cls,hits,pantry_ingredient_id):
+    def reduce_charges(cls,hits,spell_id):
+        if not cls.validate_hits(hits,spell_id):
+            return False
         data = {
-            'id' : pantry_ingredient_id,
+            'id' : spell_id,
             'hits' : hits
         }
         query = """
-        UPDATE pantry_ingredients
-        SET current_hp = (current_hp - %(hits)s)
+        UPDATE spells
+        SET current_charges = (current_charges - %(hits)s)
         WHERE id = %(id)s
         """
         connectToMySQL(cls.db).query_db(query, data)
@@ -105,12 +111,17 @@ class Pantry_Ingredient:
     
     @classmethod
     def freeze_or_defrost_ingredient(cls, pantry_ingredient_id, isFrozen):
+        if isFrozen:
+            isFrozen = 0
+        else:
+            isFrozen = 1
         data = {
-            'id' : pantry_ingredient_id
+            'id' : pantry_ingredient_id,
+            'isFrozen' : isFrozen
         }
         query = """
-        UPDATE pantry_ingredients
-        SET isFrozen = 1
+        UPDATE spells
+        SET isFrozen = %(isFrozen)s
         WHERE id = %(id)s
         ;
         """
@@ -120,29 +131,32 @@ class Pantry_Ingredient:
 
     # Delete Users Models
     @classmethod
-    def delete_pantry_ingredient_by_pantry_ingredient_id(cls,pantry_ingredient_id):
+    def delete_spell_by_id(cls,spell_id):
+        data = {
+            'id' : spell_id
+        }
         query = """
-        DELETE FROM pantry_ingredients
-        WHERE id - %(id)s
+        DELETE FROM spells
+        WHERE id = %(id)s
         ;
         """
-        data = {
-            'id' : pantry_ingredient_id
-        }
         connectToMySQL(cls.db).query_db(query, data)
 
     # Validation Methods
     @staticmethod
-    def validate_new_pantry_ingredient(data):
+    def validate_new_spell(data):
         isValid = True
-        if data['max_hp'] <= 0:
-            flash("Your ingredient needs at least one hit point before you can add it to your pantry deck. Try again.","new_ingredient")
+        if data['max_charges'] <= 0:
+            flash("Your ingredient needs at least one charge before you can add it to your pantry deck. Try again.","new_spell")
             isValid = False
         if data['expiration_date'] < date.today():
-            flash("Expiration date cannot be in the future.","new_ingredient")
+            flash("Expiration date cannot be in the past.","new_spell")
             isValid = False
         return isValid
     
-    
-        
+    @classmethod
+    def validate_hits(cls, hits, spell_id):
+        one_spell = cls.get_spell_by_id(spell_id)
+        if one_spell.current_charges < hits:
+            flash("Cannot perform, hits exceed number of charges.","cast_spell")
         

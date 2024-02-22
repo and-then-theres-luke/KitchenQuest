@@ -1,11 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../static/css/style.css" />
+        <script src="../static/js/script.js" defer></script>
+        <title>Document</title>
+    </head>
+    <body>
+        <div class="header">
+            <div class="header-left">
+                <h1>KitchenQuest</h1>
+                <p>Track Ingredients | Fight Bosses | Eat Well</p>
+            </div>
+            <div class="header-right">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/spellbook">Spellbook</a>
+                <a href="/recipes">Boss Menu</a>
+            </div>
+        </div>
+        <main>
+            <h2>Recipe Search</h2>
+            <label
+                >Search for What? You can search for recipes or ingredients.
+                <input type="text" id="search_string"
+            /></label>
+            <button
+                onclick="recipe_lookup(document.querySelector('#recipe_search_results'), search_string.value)"
+            >
+                Search
+            </button>
+            <table id="recipe_search_results">
+                <thead>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </main>
+    </body>
 </html>

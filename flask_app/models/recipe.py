@@ -1,6 +1,6 @@
 from flask_app import app
 from flask_app.config.mysqlconnection import connectToMySQL
-from flask_app.models import ingredient, user, pantry_ingredient
+from flask_app.models import ingredient, spell, user
 from datetime import date, timedelta
 from flask import flash, session
 from flask_app.api_key import API_KEY
@@ -16,32 +16,19 @@ class Recipe:
         self.instructions = data['instructions']
         self.recipe_ingredients = []
         self.optional_ingredients = []
-        self.comments = []
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
         
+        
+        
+        
+        
+
+    
+    ## DATABASE QUERIES
     # Create Recipe Models
     @classmethod
-    def create_recipe(cls, data):
-        query = """
-        INSERT INTO recipes
-        (
-            name,
-            image_url,
-            instructions,
-        )
-        VALUES
-        (
-            %(name)s,
-            %(image_url)s,
-            %(instructions)s
-        )
-        ;
-        """
-        connectToMySQL(cls.db).query_db(query, data)
-        return
-    
-    def create_recipe_no_image(cls, data):
+    def create_custom_recipe(cls, data):
         query = """
         INSERT INTO recipes
         (
@@ -61,37 +48,36 @@ class Recipe:
         return
     
     # Read Recipe Models
-    
     @classmethod
     def get_recipe_by_id(cls, recipe_id):
+        res = requests.get(
+                            'https://api.spoonacular.com/recipes/' +
+                            str(recipe_id) +
+                            '/information?includeNutrition=false&apiKey=' + 
+                            API_KEY)
+        recipe_object = res.json()
+        return recipe_object
+    
+    # Read Recipe Models
+    @classmethod
+    def get_all_custom_recipes_by_user_id(cls, user_id):
         data = {
-            'recipe_id' : recipe_id
+            'id' : user_id
         }
         query = """
         SELECT *
         FROM recipes
-        WHERE id = %(recipe_id)s
-        ;
-        """
-        results = connectToMySQL(cls.db).query_db(query, data)
-        one_recipe = cls(results[0])
-        return one_recipe
-    
-    @classmethod
-    def get_all_recipes(cls):
-        query = """
-        SELECT *
-        FROM recipes
+        WHERE id = %(id)s
         ;
         """
         all_recipes = []
-        results = connectToMySQL(cls.db).query_db(query)
+        results = connectToMySQL(cls.db).query_db(query, data)
         for row in results:
             all_recipes.append(cls(row))
         return all_recipes
     
     @classmethod
-    def get_all_recipes_by_user_id(cls, user_id):
+    def get_all_saved_recipes_by_user_id(cls, user_id):
         data = {
             'id' : user_id
         }
@@ -118,15 +104,35 @@ class Recipe:
         for row in results:
             all_saved_recipes.append(cls(row))
         return all_saved_recipes
+    
+    # Update Recipe Models
+    @classmethod
+    def update_custom_recipe(cls, recipe_id):
+        pass
+    
+    ## API QUERIES
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     @classmethod
     def recipe_search_by_ingredients(cls, search_string):
         search_string.replace(" ", "+")
         res = requests.get("""
-                           https://api.spoonacular.com/recipes/findByIngredients
-                           ?ingredients=" + {search_string} +
-                           "&apiKey=" + {API_KEY}
-                           """ )
+                            https://api.spoonacular.com/recipes/findByIngredients
+                            ?ingredients=" + {search_string} +
+                            "&apiKey=" + {API_KEY}
+                            """ )
         search_results = res.json()
         return search_results
     
