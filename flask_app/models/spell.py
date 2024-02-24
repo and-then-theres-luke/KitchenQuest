@@ -27,13 +27,18 @@ class Spell:
     # Create Pantry Ingredients Model 
     @classmethod
     def create_spell(cls, data):                 # Returns TRUE or FALSE
+        data['current_charges'] = data['max_charges']
+        if data['isFrozen'] == "on":
+            data['isFrozen'] = 1
+        else:
+            data['isFrozen'] = 0
         if not cls.validate_new_spell(data):
             return False
         query = """
             INSERT INTO spells 
                 (
                     user_id, 
-                    ingredient_id,
+                    api_ingredient_id,
                     current_charges,
                     max_charges,
                     expiration_date,
@@ -42,7 +47,7 @@ class Spell:
             VALUES 
                 (
                     %(user_id)s,
-                    %(ingredient_id)s,
+                    %(api_ingredient_id)s,
                     %(current_charges)s,
                     %(max_charges)s,
                     %(expiration_date)s,
@@ -146,10 +151,11 @@ class Spell:
     @staticmethod
     def validate_new_spell(data):
         isValid = True
-        if data['max_charges'] <= 0:
+        today = str(date.today())
+        if int(data['max_charges']) <= 0:
             flash("Your ingredient needs at least one charge before you can add it to your pantry deck. Try again.","new_spell")
             isValid = False
-        if data['expiration_date'] < date.today():
+        if data['expiration_date'] < today:
             flash("Expiration date cannot be in the past.","new_spell")
             isValid = False
         return isValid

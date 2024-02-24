@@ -24,7 +24,7 @@ def recipe_search_frontend():
 def show_one_recipe_frontend(id):
     if 'user_id' not in session:
         return redirect("/login")
-    one_recipe = recipe.Recipe.get_recipe_by_id(id)
+    one_recipe = recipe.Recipe.get_recipe_by_api_recipe_id(id)
     return render_template("one_recipe.html", one_recipe = one_recipe)
     
 

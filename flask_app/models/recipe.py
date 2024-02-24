@@ -8,125 +8,72 @@ import requests
 import re
 
 
+
+## ATTENTION
+# This is an API class, it only contains methods for returning JSON objects from the API.
+# Users cannot delete, update, or create recipes as the API database is READ ONLY.
+
 class Recipe:
     db = "kitchenquest"
     def __init__(self, data):
-        self.name = data['name']
-        self.image_url = data['image_url']
-        self.instructions = data['instructions']
-        self.recipe_ingredients = []
-        self.optional_ingredients = []
-        self.created_at = data['created_at']
-        self.updated_at = data['updated_at']
-        
-        
+        [
+            id, 
+            title, 
+            image, 
+            imageType, 
+            servings, 
+            readyInMinutes, 
+            license, 
+            sourceName, 
+            sourceURL, 
+            creditsText, 
+            extendedIngredients, 
+            summary] = data
+        self.id = id
+        self.title = title
+        self.image = image
+        self.image_type = imageType
+        self.servings = servings
+        self.ready_in_minutes = readyInMinutes
+        self.license = license
+        self.source_name = sourceName
+        self.source_url = sourceURL
+        self.credits_text = creditsText
+        self.extended_ingredients = extendedIngredients
+        self.summary = summary
         
         
         
 
-    
-    ## DATABASE QUERIES
-    # Create Recipe Models
+    # Read Recipe
     @classmethod
-    def create_custom_recipe(cls, data):
-        query = """
-        INSERT INTO recipes
-        (
-            name,
-            image_url,
-            instructions,
-        )
-        VALUES
-        (
-            %(name)s,
-            %(image_url)s,
-            %(instructions)s
-        )
-        ;
-        """
-        connectToMySQL(cls.db).query_db(query, data)
-        return
-    
-    # Read Recipe Models
-    @classmethod
-    def get_recipe_by_id(cls, recipe_id):
+    def get_recipe_by_api_recipe_id(cls, api_recipe_id):
         res = requests.get(
                             'https://api.spoonacular.com/recipes/' +
-                            str(recipe_id) +
+                            str(api_recipe_id) +
                             '/information?includeNutrition=false&apiKey=' + 
                             API_KEY)
-        recipe_object = res.json()
-        return recipe_object
-    
-    # Read Recipe Models
-    @classmethod
-    def get_all_custom_recipes_by_user_id(cls, user_id):
-        data = {
-            'id' : user_id
+        expected_data = res.json()
+        print(expected_data)
+        new_data = {
+            'id' : expected_data['id'], 
+            'title' : expected_data['title'], 
+            'image' : expected_data['image'], 
+            'image_type' : expected_data['imageType'], 
+            'servings' : expected_data['servings'], 
+            'ready_in_minutes' : expected_data['readyInMinutes'], 
+            'license' : expected_data['license'], 
+            'source_name' : expected_data['sourceName'], 
+            'source_url' : expected_data['sourceURL'], 
+            'credits_text' : expected_data['creditsText'], 
+            'ingredients' : expected_data['extendedIngredients'],
+            'summary' : expected_data['summary']
         }
-        query = """
-        SELECT *
-        FROM recipes
-        WHERE id = %(id)s
-        ;
-        """
-        all_recipes = []
-        results = connectToMySQL(cls.db).query_db(query, data)
-        for row in results:
-            all_recipes.append(cls(row))
-        return all_recipes
-    
-    @classmethod
-    def get_all_saved_recipes_by_user_id(cls, user_id):
-        data = {
-            'id' : user_id
-        }
-        query = """
-        SELECT 
-            recipes.id,
-            recipes.name,
-            recipes.image_url,
-            recipes.instructions,
-            recipes.created_at,
-            recipes.updated_at
-        FROM users
-        LEFT JOIN saved_recipes
-        ON users.id = saved_recipes.user_id
-        LEFT JOIN recipes
-        ON saved_recipes.recipe_id = recipes.id
-        WHERE users.id = %(id)s
-        ;
-        """
-        results = connectToMySQL(cls.db).query_db(query,data)
-        all_saved_recipes = []
-        if not results:
-            return all_saved_recipes
-        for row in results:
-            all_saved_recipes.append(cls(row))
-        return all_saved_recipes
-    
-    # Update Recipe Models
-    @classmethod
-    def update_custom_recipe(cls, recipe_id):
-        pass
-    
-    ## API QUERIES
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        one_recipe = cls(new_data)
+        return one_recipe
 
     @classmethod
-    def recipe_search_by_ingredients(cls, search_string):
+    def recipe_search(cls, search_string):
         search_string.replace(" ", "+")
         res = requests.get("""
                             https://api.spoonacular.com/recipes/findByIngredients
