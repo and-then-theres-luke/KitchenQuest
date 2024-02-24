@@ -14,6 +14,7 @@ class Spell:
         self.id = data['id']                        # ID for an ingredient in the pantry
         self.user_id = data['user_id']              # ID for the user whose pantry that ingredient is in
         self.api_ingredient_id = data['api_ingredient_id']  # ID for the actual ingredient data according to api
+        self.name = data['name']
         self.current_charges = data['current_charges']
         self.max_charges = data['max_charges']
         self.expiration_date = data['expiration_date'] # created_at(day) minus expiration I know it's pseudo code, shut up.
@@ -27,7 +28,6 @@ class Spell:
     # Create Pantry Ingredients Model 
     @classmethod
     def create_spell(cls, data):                 # Returns TRUE or FALSE
-        data['current_charges'] = data['max_charges']
         if data['isFrozen'] == "on":
             data['isFrozen'] = 1
         else:
@@ -39,6 +39,7 @@ class Spell:
                 (
                     user_id, 
                     api_ingredient_id,
+                    name,
                     current_charges,
                     max_charges,
                     expiration_date,
@@ -48,7 +49,8 @@ class Spell:
                 (
                     %(user_id)s,
                     %(api_ingredient_id)s,
-                    %(current_charges)s,
+                    %(name)s,
+                    %(max_charges)s,
                     %(max_charges)s,
                     %(expiration_date)s,
                     %(isFrozen)s

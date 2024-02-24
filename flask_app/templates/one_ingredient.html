@@ -3,15 +3,19 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
+        <link rel="stylesheet" href="../static/css/style.css" />
+        <title>KitchenQuest</title>
     </head>
     <body>
         <div class="header">
-            <h1>KitchenQuest</h1>
-            <div>
-                <p>Logout</p>
-                <p>View Pantry Deck</p>
-                <p>View Calendar</p>
+            <div class="header-left">
+                <h1>KitchenQuest</h1>
+                <p>Track Ingredients | Fight Bosses | Eat Well</p>
+            </div>
+            <div class="header-right">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/spellbook">Spellbook</a>
+                <a href="/recipes">Boss Menu</a>
             </div>
         </div>
         <main>
@@ -23,12 +27,17 @@
             <form action="/ingredients/make_spell" method="POST">
                 <input
                     type="hidden"
+                    value="{{one_ingredient.name}}"
+                    name="name"
+                />
+                <input
+                    type="hidden"
                     value="{{session['user_id']}}"
                     name="user_id"
                 />
                 <input
                     type="hidden"
-                    value="{{one_ingredient.id}}"
+                    value="{{one_ingredient.api_ingredient_id}}"
                     name="api_ingredient_id"
                 />
                 <label

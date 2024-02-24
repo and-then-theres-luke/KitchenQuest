@@ -13,38 +13,23 @@ import re
 class Ingredient:
     db = "kitchenquest" #which database are you using for this project
     def __init__(self, data):
-        [
-            id, 
-            original, 
-            originalName, 
-            name, 
-            amount, 
-            unit, 
-            possibleUnits, 
-            shoppingListUnits, 
-            aisle, 
-            image, 
-            categoryPath
-            ] = data
-        self.api_ingredient_id = id
-        self.original = original
-        self.originalName = originalName
-        self.name = name
-        self.amount = amount
-        self.unit = unit
-        self.possible_units = possibleUnits
-        self.shopping_list_units = shoppingListUnits
-        self.aisle = aisle
-        self.image = image
-        self.category_path = categoryPath
+        self.api_ingredient_id = data['api_ingredient_id']
+        self.name = data['name']
+        self.aisle = data['aisle']
+        self.image = data['image']
 
 
 
     # Read ingredients Model
     
     @classmethod
-    def get_ingredient_by_api_ingredient_id(cls, id):
-        res = requests.get("https://api.spoonacular.com/food/ingredients/" + id + "/information?apiKey=" + API_KEY)
+    def get_ingredient_by_api_ingredient_id(cls, api_ingredient_id):
+        res = requests.get("https://api.spoonacular.com/food/ingredients/" + api_ingredient_id + "/information?apiKey=" + API_KEY)
         one_ingredient = res.json()
-        cls(one_ingredient)
-        return one_ingredient
+        data = {
+            'api_ingredient_id' : one_ingredient['id'],
+            'name' : one_ingredient['name'],
+            'aisle' : one_ingredient['aisle'],
+            'image' : one_ingredient['image']
+        }
+        return cls(data)

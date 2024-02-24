@@ -16,7 +16,7 @@ def ingredient_search_frontend():
         return redirect("/login")
     return render_template("ingredient_search.html")
 
-@app.route("/ingredients/make_spell", methods=["POST"])
+@app.route("/ingredients/make_spell/", methods=["POST"])
 def make_spell_frontend():
     data = {}
     for item in request.form:
@@ -24,6 +24,8 @@ def make_spell_frontend():
     if 'isFrozen' not in data:
         data['isFrozen'] = 0
     if not spell.Spell.create_spell(data):
-        return redirect("/ingredients/show_one/" + data["api_ingredient_id"])
+        print("Whoops, redirect")
+        return redirect("/ingredients/show_one/" + request.form['api_ingredient_id'])
+    print("good job!")
     return redirect("/dashboard")
 

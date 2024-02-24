@@ -78,7 +78,6 @@ const recipe_lookup = async (table, search_string) => {
 };
 
 const construct_spell_table = (spellbook, table) => {
-    console.log("Constructor is running!");
     let tableBody = table.querySelector("tbody");
     // Function to sort the table before constructing it.
     tableBody.innerHTML = "";
