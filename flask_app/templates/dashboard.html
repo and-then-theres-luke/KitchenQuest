@@ -4,12 +4,10 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="../static/css/style.css" />
-        <script src="../static/js/script.js" defer></script>
+        <script src="../static/js/script.js"></script>
         <title>KitchenQuest</title>
     </head>
-    <body
-        onLoad="construct_spell_table({{spellbook}}, document.querySelector('#decktable'))"
-    >
+    <body>
         <div class="header">
             <div class="header-left">
                 <h1>KitchenQuest</h1>
@@ -17,6 +15,7 @@
             </div>
             <div class="header-right">
                 <a href="/dashboard">Dashboard</a>
+                <a href="/grocery_list">Grocery List</a>
                 <a href="/spellbook">Spellbook</a>
                 <a href="/recipes">Boss Menu</a>
             </div>
@@ -29,7 +28,24 @@
                         <th>Spells</th>
                         <th>Expiration Date</th>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        {% for spell in spellbook%}
+                        <tr>
+                            <td>{{spell.id}}</td>
+                            <td>
+                                <div id="progress_for_{{spell.id}}"></div>
+                                <script>
+                                    expiration_bars(
+                                        document.querySelector(
+                                            "#progress_for_{{spell.id}}"
+                                        ),
+                                        `{{spell.expiration_date}}`
+                                    );
+                                </script>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
             </div>
             <div class="dashboard_right_col">

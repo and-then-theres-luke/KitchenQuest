@@ -82,21 +82,22 @@ const construct_spell_table = (spellbook, table) => {
     let tableBody = table.querySelector("tbody");
     // Function to sort the table before constructing it.
     tableBody.innerHTML = "";
-    for (const spell of spellbook) {
+    for (index = 0; index < spellbook.length - 1; index++) {
         const rowElement = document.createElement("tr");
         let nameCellElement = document.createElement("td");
-        nameCellElement.textContent = spell.id;
+        nameCellElement.textContent = spellbook[index].id;
         rowElement.appendChild(nameCellElement);
 
         let expirationBarElement = document.createElement("div");
         // Function to construct the status bar
-        expiration_bars(expirationBarElement, spell.expiration_date);
+        expiration_bars(expirationBarElement, spellbook[index].expiration_date);
         rowElement.appendChild(expirationBarElement);
         tableBody.appendChild(rowElement);
     }
 };
 
-const expiration_bars = (statusbar, expiration_date) => {
+const expiration_bars = (statusdiv, expiration_date) => {
+    console.log("Constructor is running!");
     let date = new Date();
     let day = date.getDate();
     let month = date.getMonth() + 1;
@@ -123,7 +124,24 @@ const expiration_bars = (statusbar, expiration_date) => {
         style_width = 600;
     }
     style_box = style_box + `width: ${style_width}px;`;
-    statusbar.style = style_box;
+    statusdiv.style = style_box;
+    return statusbar;
 };
 
-construct_spell_table();
+const test_script = (spellbook, table) => {
+    let tableBody = table.querySelector("tbody");
+    console.log(spellbook[0]);
+    for (let index = 0; index < spellbook.length - 1; index++) {
+        console.log(spellbook[index].expiration_date);
+    }
+    //     const rowElement = document.createElement("tr");
+    //     let nameCellElement = document.createElement("td");
+    //     nameCellElement.textContent = spellbook[index].id;
+    //     rowElement.appendChild(nameCellElement);
+
+    //     let expirationBarElement = document.createElement("div");
+    //     // Function to construct the status bar
+    //     expiration_bars(expirationBarElement, spellbook[index].expiration_date);
+    //     rowElement.appendChild(expirationBarElement);
+    //     tableBody.appendChild(rowElement);
+};
