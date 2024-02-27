@@ -3,6 +3,8 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
         <title>Document</title>
     </head>
     <body>
@@ -15,35 +17,43 @@
             </div>
         </div>
         <main>
-            <h1>Add {{one_recipe.title}}</h1>
+            <h1>Convert {{one_recipe.title}} to Boss</h1>
             <img src="{{one_recipe.image}}" alt="" />
-            <form action="add_ingredient_to_pantry">
+            <p>This boss feeds a party of <select name="servings"></select></p>
+            <p>{{one_recipe.extendedIngredients}}</p>
+            <table id="recipe_ingredient_table">
+                <thead>
+                    <th>Spell</th>
+                    <th>Recipe Calls For</th>
+                    <th>One Charge is Equal To</th>
+                    <th>Charges Needed</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                    {% for ingredient in one_recipe.extendedIngredients %}
+                    <tr>
+                        <!-- Spell Name -->
+                        <td>{{ingredient.name}}</td>
+                        <!-- recipe calls for -->
+                        <td><span id="amount_set_{{ingredient.id}}">{{ingredient.amount}}</span> {{ingredient.unit}}</td>
+                        <!-- one charge is equal to -->
+                        <td><input type="float" id="amount_{{ingredient.id}}" value="{{ingredient.amount}}"> {{ingredient.unit}}</td>
+                        <!-- Charges needed -->
+                        <td id="charge_calculated_{{ingredient.id}}"></td>
+                        <!-- Calculate Charges -->
+                        <td><button onclick="calculate_charges({{ingredient.amount}}, document.querySelector('#amount_{{ingredient.id}}'), document.querySelector('#charge_calculated_{{ingredient.id}}'))"> Calculate Charges </button> </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+            <form action="/recipes/add_boss_to_roster">
                 <input
                     type="hidden"
                     value="{{session['user_id']}}"
                     name="user_id"
                 />
-                <label>I want to add... <input type="number" min="1" /></label>
-                <select name="unit_type" id="unit_type">
-                    {% with possible_units = one_recipe.possibleUnits %} {% for
-                    unit in possible_units %}
-                    <option value="{{unit}}">{{unit}}</option>
-                    {% endfor %} {% endwith %}
-                </select>
-                <p>of {{one_recipe.name}} to my pantry.</p>
-                <label
-                    >This card will expire on
-                    <input type="date" name="expiration_date"
-                /></label>
-                <label
-                    >Check this box to freeze this ingredient.
-                    <input type="checkbox" name="isFrozen"
-                /></label>
-                <button>Make it so.</button>
-                <div>
-                    <p>Recipe Summary</p>
-                    {{one_recipe.summary|safe}}
-                </div>
+                
             </form>
         </main>
     </body>

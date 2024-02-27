@@ -55,3 +55,7 @@ main {
     background-color: white;
     height: auto;
 }
+
+.spellfound td {
+    color: green;
+}

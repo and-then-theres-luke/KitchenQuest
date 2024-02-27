@@ -3,9 +3,17 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="../static/css/style.css" />
-        <script src="../static/js/script.js"></script>
-        <title>KitchenQuest</title>
+        <script
+            type="text/javascript"
+            src="{{ url_for('static', filename='js/script.js') }}"
+            defer
+        ></script>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static', filename='css/style.css') }}"
+        />
+        <title>Document</title>
     </head>
     <body>
         <div class="header">
@@ -64,7 +72,7 @@
                 <td>pending</td>
                 <td>pending</td>
                 {% endfor %} {% endwith %}
-                <p>See All Recipes</p>
+                <a href="/recipes/search">Recipe Search</a>
                 <a href="/ingredients/search">Ingredient Search</a>
             </div>
         </main>

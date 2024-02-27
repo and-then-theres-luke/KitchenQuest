@@ -1,6 +1,6 @@
 from flask_app import app
 from flask_app.config.mysqlconnection import connectToMySQL
-from flask_app.models import ingredient, spell, user
+from flask_app.models import ingredient, spell, user, recipe, boss
 from datetime import date, timedelta
 from flask import flash, session
 from flask_app.api_key import API_KEY
@@ -16,34 +16,40 @@ import re
 class Recipe:
     db = "kitchenquest"
     def __init__(self, data):
-        [
-            id, 
-            title, 
-            image, 
-            imageType, 
-            servings, 
-            readyInMinutes, 
-            license, 
-            sourceName, 
-            sourceURL, 
-            creditsText, 
-            extendedIngredients, 
-            summary] = data
-        self.id = id
-        self.title = title
-        self.image = image
-        self.image_type = imageType
-        self.servings = servings
-        self.ready_in_minutes = readyInMinutes
-        self.license = license
-        self.source_name = sourceName
-        self.source_url = sourceURL
-        self.credits_text = creditsText
-        self.extended_ingredients = extendedIngredients
-        self.summary = summary
+        self.id = data['id']
+        self.title = data['title']
+        self.image = data['image']
+        self.imageType = data['imageType']
+        self.servings = data['servings']
+        self.readyInMinutes = data['readyInMinutes']
+        self.extendedIngredients = data['extendedIngredients']
+        self.summary = data['summary']
         
         
         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     # Read Recipe
     @classmethod
@@ -53,25 +59,104 @@ class Recipe:
                             str(api_recipe_id) +
                             '/information?includeNutrition=false&apiKey=' + 
                             API_KEY)
-        expected_data = res.json()
-        print(expected_data)
-        new_data = {
-            'id' : expected_data['id'], 
-            'title' : expected_data['title'], 
-            'image' : expected_data['image'], 
-            'image_type' : expected_data['imageType'], 
-            'servings' : expected_data['servings'], 
-            'ready_in_minutes' : expected_data['readyInMinutes'], 
-            'license' : expected_data['license'], 
-            'source_name' : expected_data['sourceName'], 
-            'source_url' : expected_data['sourceURL'], 
-            'credits_text' : expected_data['creditsText'], 
-            'ingredients' : expected_data['extendedIngredients'],
-            'summary' : expected_data['summary']
+        one_recipe = res.json()
+        data = {
+            'id' : one_recipe['id'], 
+            'title' : one_recipe['title'], 
+            'image' : one_recipe['image'], 
+            'imageType' : one_recipe['imageType'], 
+            'servings' : one_recipe['servings'], 
+            'readyInMinutes' : one_recipe['readyInMinutes'], 
+            'extendedIngredients' : one_recipe['extendedIngredients'],
+            'summary' : one_recipe['summary']
         }
-        one_recipe = cls(new_data)
+        one_recipe = cls(data)
         return one_recipe
-
+    
+    
+    
+        # Read Recipe
+    @classmethod
+    def get_recipe_by_api_recipe_id_raw_data(cls, api_recipe_id):
+        res = requests.get(
+                            'https://api.spoonacular.com/recipes/' +
+                            str(api_recipe_id) +
+                            '/information?includeNutrition=false&apiKey=' + 
+                            API_KEY)
+        one_recipe = res.json()
+        data = {
+            'id' : one_recipe['id'], 
+            'title' : one_recipe['title'], 
+            'image' : one_recipe['image'], 
+            'imageType' : one_recipe['imageType'], 
+            'servings' : one_recipe['servings'], 
+            'readyInMinutes' : one_recipe['readyInMinutes'], 
+            'extendedIngredients' : one_recipe['extendedIngredients'],
+            'summary' : one_recipe['summary']
+        }
+        return data
+    
+    @classmethod
+    def recipe_boss_conversion_handler(cls, api_recipe_id):
+        one_recipe = recipe.Recipe.get_recipe_by_api_recipe_id(api_recipe_id)
+        spellbook = spell.Spell.get_spellbook_by_user_id_raw_data(session['user_id'])
+        for one_ingredient in one_recipe.extendedIngredients:
+            for one_spell in spellbook:
+                if one_ingredient['id'] == one_spell['api_ingredient_id']:
+                    one_ingredient['isSpell'] = True
+                    if one_ingredient['unit'] != one_spell['charge_unit']:
+                        one_ingredient['amount'] = ingredient.Ingredient.convert_amounts(one_ingredient['id'],one_ingredient['amount'], one_ingredient['unit'],one_spell['charge_unit'])
+                        one_ingredient['charge_unit'] = one_spell['charge_unit']
+                else:
+                    one_ingredient['isSpell'] = False
+        return one_recipe
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    @classmethod
+    def recipe_boss_conversion_handler_test(cls, api_recipe_id):
+        one_recipe = recipe.Recipe.get_recipe_by_api_recipe_id_raw_data(api_recipe_id)
+        spellbook = spell.Spell.get_spellbook_by_user_id_raw_data(session['user_id'])
+        for one_ingredient in one_recipe['extendedIngredients']:
+            for one_spell in spellbook:
+                if one_ingredient['id'] == one_spell['api_ingredient_id']:
+                    one_ingredient['isSpell'] = True
+                    if one_ingredient['unit'] != one_spell['charge_unit']:
+                        one_ingredient['amount'] = ingredient.Ingredient.convert_amounts(one_ingredient['id'],one_ingredient['amount'], one_ingredient['unit'],one_spell['charge_unit'])
+                        one_ingredient['charge_unit'] = one_spell['charge_unit']
+                else:
+                    one_ingredient['isSpell'] = False
+                    one_ingredient['charge_amount'] = ""
+                    one_ingredient['charge_unit'] = one_ingredient['unit']
+        return one_recipe
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @classmethod
     def recipe_search(cls, search_string):
         search_string.replace(" ", "+")

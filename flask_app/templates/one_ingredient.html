@@ -3,8 +3,17 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="../static/css/style.css" />
-        <title>KitchenQuest</title>
+        <script
+            type="text/javascript"
+            src="{{ url_for('static', filename='js/script.js') }}"
+            defer
+        ></script>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static', filename='css/style.css') }}"
+        />
+        <title>Document</title>
     </head>
     <body>
         <div class="header">
@@ -48,6 +57,14 @@
                         id="max_charges"
                 /></label>
                 <p>If you're unsure, just check the Nutrition Facts.</p>
+                <label>One Charge of this spell is equal to: </label>
+                <input type="float" name="charge_value" />
+                <select name="charge_unit">
+                    {% with possibleUnits = one_ingredient.possibleUnits %} {%
+                    for item in possibleUnits %}
+                    <option value="{{item}}">{{item}}</option>
+                    {% endfor %} {% endwith %}
+                </select>
                 <label
                     >This Spell expires on:
                     <input type="date" name="expiration_date"

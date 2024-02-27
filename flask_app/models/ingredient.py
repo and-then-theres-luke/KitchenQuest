@@ -17,6 +17,7 @@ class Ingredient:
         self.name = data['name']
         self.aisle = data['aisle']
         self.image = data['image']
+        self.possibleUnits = data['possibleUnits']
 
 
 
@@ -30,6 +31,16 @@ class Ingredient:
             'api_ingredient_id' : one_ingredient['id'],
             'name' : one_ingredient['name'],
             'aisle' : one_ingredient['aisle'],
-            'image' : one_ingredient['image']
+            'image' : one_ingredient['image'],
+            'possibleUnits' : one_ingredient['possibleUnits']
         }
         return cls(data)
+    
+    @staticmethod
+    def convert_amounts(api_ingredient_id, charge_value, charge_unit, target_unit):
+        print(api_ingredient_id, charge_value, charge_unit, target_unit)
+        query = """https://api.spoonacular.com/recipes/convert?ingredientName=""" + str(api_ingredient_id) + """&sourceAmount=""" + str(charge_value) + """&sourceUnit=""" + str(charge_unit) + """&targetUnit=""" + str(target_unit) + """&apiKey=""" + str(API_KEY)
+        res = requests.get(query)
+        results = res.json()
+        targetAmount = results['targetAmount']
+        return targetAmount

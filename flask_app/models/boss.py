@@ -97,3 +97,21 @@ class Boss:
         for boss in results:
             all_bosses.append(cls(boss))
         return all_bosses
+    
+    @classmethod
+    def get_boss_by_user_match_and_api_recipe_id(cls, user_id,api_recipe_id):
+        data = {
+            'user_id' : user_id,
+            'api_recipe_id' : api_recipe_id
+        }
+        query = """
+        SELECT *
+        FROM bosses
+        WHERE user_id = %(user_id)s
+        AND api_recipe_id = %(api_recipe_id)s
+        ;
+        """
+        results = connectToMySQL(cls.db).query_db(query, data)
+        if not results:
+            return False
+        return cls(results[0])

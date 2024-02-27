@@ -15,6 +15,8 @@ class Spell:
         self.user_id = data['user_id']              # ID for the user whose pantry that ingredient is in
         self.api_ingredient_id = data['api_ingredient_id']  # ID for the actual ingredient data according to api
         self.name = data['name']
+        self.charge_value = data['charge_value']
+        self.charge_unit = data['charge_unit']
         self.current_charges = data['current_charges']
         self.max_charges = data['max_charges']
         self.expiration_date = data['expiration_date'] # created_at(day) minus expiration I know it's pseudo code, shut up.
@@ -25,7 +27,7 @@ class Spell:
 
 
 
-    # Create Pantry Ingredients Model 
+    # Create Spell Model 
     @classmethod
     def create_spell(cls, data):                 # Returns TRUE or FALSE
         if data['isFrozen'] == "on":
@@ -42,6 +44,8 @@ class Spell:
                     name,
                     current_charges,
                     max_charges,
+                    charge_value,
+                    charge_unit,
                     expiration_date,
                     isFrozen
                 ) 
@@ -52,6 +56,8 @@ class Spell:
                     %(name)s,
                     %(max_charges)s,
                     %(max_charges)s,
+                    %(charge_value)s,
+                    %(charge_unit)s,
                     %(expiration_date)s,
                     %(isFrozen)s
                 )
@@ -62,7 +68,7 @@ class Spell:
         return True
     
 
-    # Read Pantry Ingredient Models
+    # Read Spell Models
     
     
     
@@ -99,7 +105,24 @@ class Spell:
             one_spellbook.append(cls(row))
         return one_spellbook
 
-    # Update Spellbook Models
+    @classmethod
+    def get_spellbook_by_user_id_raw_data(cls, user_id):
+        data = {
+            'user_id' : user_id
+        }
+        query = """
+        SELECT *
+        FROM spells
+        WHERE user_id = %(user_id)s
+        ;
+        """
+        results = connectToMySQL(cls.db).query_db(query, data)
+        one_spellbook = []
+        for row in results:
+            one_spellbook.append(row)
+        return one_spellbook
+    
+    # Update Spell Models
     @classmethod
     def reduce_charges(cls,hits,spell_id):
         if not cls.validate_hits(hits,spell_id):
@@ -136,7 +159,7 @@ class Spell:
         return
 
 
-    # Delete Users Models
+    # Delete Spell Models
     @classmethod
     def delete_spell_by_id(cls,spell_id):
         data = {
@@ -168,3 +191,35 @@ class Spell:
         if one_spell.current_charges < hits:
             flash("Cannot perform, hits exceed number of charges.","cast_spell")
         
+    
+    
+
+    # Lets save this for if we need it later....
+    # @staticmethod
+    # def conversion_route_method(starting_unit, initial_value, ending_unit):
+    #     if starting_unit == "t" or starting_unit == "tsp" or starting_unit == "teaspoon":
+    #         pass
+    #         # TSP conversion method
+    #     elif starting_unit == 'T' or starting_unit == 'TB' or starting_unit == 'Tbsp' or starting_unit == 'Tablespoon' or starting_unit == 'tablespoon':
+    #         pass
+    #     elif starting_unit == 'C' or starting_unit == 'Cup' or starting_unit == 'cup' or starting_unit == 'c':
+    #         pass
+    #     elif starting_unit == 'Pint' or starting_unit == 'pint' or starting_unit == 'p' or starting_unit == 'pt':
+    #         pass
+    #     elif starting_unit == 'Quart' or starting_unit == 'quart' or starting_unit == 'qt' or starting_unit == 'Qt':
+    #         pass
+    #     elif starting_unit == 'Gallon' or starting_unit == 'Gal' or starting_unit == 'gal' or starting_unit == 'gallon':
+    #         pass
+    #     elif starting_unit == 'Ounce' or starting_unit == 'ounce' or starting_unit == 'oz':
+    #         pass
+    #     elif starting_unit == 'Fluid ounce' or starting_unit == 'fluid ounce' or starting_unit == 'fl oz' or starting_unit == 'fl. oz.':
+    #         pass
+    #     elif starting_unit = 
+    
+    # @staticmethod
+    # def dry_ingredient_conversion_method():
+        
+    # @staticmethod
+    # def wet_ingredient_conversion_method():
+    
+    
