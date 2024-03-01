@@ -24,9 +24,5 @@ def recipe_search_frontend():
 def show_one_recipe_frontend(id):
     if 'user_id' not in session:
         return redirect("/login")
-    one_recipe = recipe.Recipe.recipe_boss_conversion_handler_test(id)
-    
-    # This recieves the following data:
-    # one_recipe:
-    
-    return render_template("test.html", one_recipe = one_recipe)
+    one_recipe = recipe.Recipe.recipe_boss_conversion_handler(id)
+    return render_template("one_recipe.html", one_recipe = one_recipe)

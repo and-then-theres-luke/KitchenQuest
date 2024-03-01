@@ -24,32 +24,6 @@ class Recipe:
         self.readyInMinutes = data['readyInMinutes']
         self.extendedIngredients = data['extendedIngredients']
         self.summary = data['summary']
-        
-        
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     # Read Recipe
     @classmethod
@@ -72,9 +46,7 @@ class Recipe:
         }
         one_recipe = cls(data)
         return one_recipe
-    
-    
-    
+
         # Read Recipe
     @classmethod
     def get_recipe_by_api_recipe_id_raw_data(cls, api_recipe_id):
@@ -88,75 +60,40 @@ class Recipe:
             'id' : one_recipe['id'], 
             'title' : one_recipe['title'], 
             'image' : one_recipe['image'], 
-            'imageType' : one_recipe['imageType'], 
-            'servings' : one_recipe['servings'], 
-            'readyInMinutes' : one_recipe['readyInMinutes'], 
             'extendedIngredients' : one_recipe['extendedIngredients'],
-            'summary' : one_recipe['summary']
         }
         return data
     
     @classmethod
     def recipe_boss_conversion_handler(cls, api_recipe_id):
-        one_recipe = recipe.Recipe.get_recipe_by_api_recipe_id(api_recipe_id)
-        spellbook = spell.Spell.get_spellbook_by_user_id_raw_data(session['user_id'])
-        for one_ingredient in one_recipe.extendedIngredients:
-            for one_spell in spellbook:
-                if one_ingredient['id'] == one_spell['api_ingredient_id']:
-                    one_ingredient['isSpell'] = True
-                    if one_ingredient['unit'] != one_spell['charge_unit']:
-                        one_ingredient['amount'] = ingredient.Ingredient.convert_amounts(one_ingredient['id'],one_ingredient['amount'], one_ingredient['unit'],one_spell['charge_unit'])
-                        one_ingredient['charge_unit'] = one_spell['charge_unit']
-                else:
-                    one_ingredient['isSpell'] = False
-        return one_recipe
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    @classmethod
-    def recipe_boss_conversion_handler_test(cls, api_recipe_id):
         one_recipe = recipe.Recipe.get_recipe_by_api_recipe_id_raw_data(api_recipe_id)
-        spellbook = spell.Spell.get_spellbook_by_user_id_raw_data(session['user_id'])
+        spellbook = spell.Spell.get_spellbook_by_user_id(session['user_id'])
+        if spellbook == []:
+            for one_ingredient in one_recipe['extendedIngredients']:
+                one_ingredient['isSpell'] = False
+                one_ingredient['charge_amount'] = ""
+                one_ingredient['charge_unit'] = one_ingredient['unit']
         for one_ingredient in one_recipe['extendedIngredients']:
             for one_spell in spellbook:
-                if one_ingredient['id'] == one_spell['api_ingredient_id']:
-                    one_ingredient['isSpell'] = True
-                    if one_ingredient['unit'] != one_spell['charge_unit']:
-                        one_ingredient['amount'] = ingredient.Ingredient.convert_amounts(one_ingredient['id'],one_ingredient['amount'], one_ingredient['unit'],one_spell['charge_unit'])
-                        one_ingredient['charge_unit'] = one_spell['charge_unit']
+                if one_ingredient['id'] == one_spell.api_ingredient_id:
+                    one_ingredient['isSpell'] = "True"
+                    if one_ingredient['unit'] != one_spell.charge_unit and one_ingredient['unit'] != (f"""{one_spell.charge_unit}s"""):
+                        # Finding that the ingredient is a spell, and the conversion units do not match...
+                        # We put in the values of the ingredient as the {unit} and {amount} and the {charge_unit} we wish to convert to, then returns the value of the new unit.
+                        one_ingredient['charge_amount'] = ingredient.Ingredient.convert_amounts(one_ingredient['id'],one_spell.charge_amount, one_spell.charge_unit, one_ingredient['unit'])
+                        # Now we return all four values: the {amount} and {unit} the recipe calls for, and the {charge_amount} and {charge_unit} of one charge. These are static values.
+                    else:
+                        one_ingredient['charge_amount'] = one_spell.charge_amount
+                        one_ingredient['charge_unit'] = one_spell.charge_unit
+                        # Now, if we have a match for units, it looks a little different
+                        
                 else:
                     one_ingredient['isSpell'] = False
                     one_ingredient['charge_amount'] = ""
                     one_ingredient['charge_unit'] = one_ingredient['unit']
         return one_recipe
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     @classmethod
     def recipe_search(cls, search_string):
         search_string.replace(" ", "+")

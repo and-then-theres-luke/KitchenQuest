@@ -45,7 +45,9 @@ def logout_frontend():
     session.clear()
     return redirect('/')
 
-
+@app.route('/test')
+def test_route():
+    return render_template("test.html")
     
 
 # Update Users Controller

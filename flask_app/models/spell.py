@@ -15,7 +15,7 @@ class Spell:
         self.user_id = data['user_id']              # ID for the user whose pantry that ingredient is in
         self.api_ingredient_id = data['api_ingredient_id']  # ID for the actual ingredient data according to api
         self.name = data['name']
-        self.charge_value = data['charge_value']
+        self.charge_amount = data['charge_amount']
         self.charge_unit = data['charge_unit']
         self.current_charges = data['current_charges']
         self.max_charges = data['max_charges']
@@ -44,7 +44,7 @@ class Spell:
                     name,
                     current_charges,
                     max_charges,
-                    charge_value,
+                    charge_amount,
                     charge_unit,
                     expiration_date,
                     isFrozen
@@ -56,7 +56,7 @@ class Spell:
                     %(name)s,
                     %(max_charges)s,
                     %(max_charges)s,
-                    %(charge_value)s,
+                    %(charge_amount)s,
                     %(charge_unit)s,
                     %(expiration_date)s,
                     %(isFrozen)s

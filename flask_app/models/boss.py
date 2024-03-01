@@ -1,6 +1,6 @@
 from flask_app import app
 from flask_app.config.mysqlconnection import connectToMySQL
-from flask_app.models import ingredient, spell, user, recipe
+from flask_app.models import ingredient, spell, user, recipe, required_spells
 from datetime import date, timedelta
 from flask import flash, session
 from flask_app.api_key import API_KEY
@@ -14,30 +14,50 @@ import re
 class Boss:
     db = "kitchenquest"
     def __init__(self, data):
-        [id, user_id, api_recipe_id, xp_value, created_at, updated_at] = data
-        self.id = id
-        self.user_id = user_id
-        self.api_recipe_id = api_recipe_id
-        self.xp_value = xp_value
+        self.id = data['id']
+        self.user_id = data['user_id']
+        self.api_recipe_id = data['api_recipe_id']
+        self.title = data['title']
+        self.xp_value = data['xp_value']
+        self.image_url = data['image_url']
         self.spells_needed = []
-        self.created_at = created_at
-        self.updated_at = updated_at
+        self.created_at = data['created_at']
+        self.updated_at = data['updated_at']
     
     
     
     # Create Boss Method
-    
     @classmethod
-    def convert_recipe_to_boss(cls, api_recipe_id):
-        one_recipe = recipe.Recipe.get_recipe_by_api_recipe_id(api_recipe_id)
-        one_boss = None
-        data = {}
-        xp_value = 0
-        for ingredient in one_recipe.extendedIngredients:
-            data.spells
-            xp_value += 25
-            
-        
+    def create_boss_with_required_spells(cls, inputs):
+        cleaned_inputs = []
+        for item in inputs:
+            cleaned_inputs.append(inputs[item])
+        # xp_value = 0
+        # for row in inputs:
+        #     xp_value += 1
+        # xp_value = (xp_value / 6) * 25
+        # boss_data = {
+        #     'user_id' : session['user_id'],
+        #     'api_recipe_id' : inputs['api_recipe_id'], # Index 0
+        #     'title' : inputs['title'], # Index 1
+        #     'image_url' : inputs['image_url'], # Index 2
+        #     'xp_value' : xp_value
+        # }
+        # boss_id = cls.create_boss(boss_data)
+        ingredient_data = {
+            'boss_id' : 1,
+        }
+        index = 3
+        while (index < len(cleaned_inputs)-1):
+            ingredient_data['api_ingredient_id'] = cleaned_inputs[index]
+            ingredient_data['name'] = cleaned_inputs[index+1]
+            ingredient_data['amount'] = cleaned_inputs[index+2]
+            ingredient_data['unit'] = cleaned_inputs[index+3]
+            ingredient_data['charge_unit'] = cleaned_inputs[index+4]
+            ingredient_data['charge_amount'] = cleaned_inputs[index+5]
+            ingredient_data['charges_needed'] = float(cleaned_inputs[index+2]) / float(cleaned_inputs[index+5])
+            index += 6
+            required_spells.Required_Spells.create_required_spell(ingredient_data)
         
     
     @classmethod
@@ -47,18 +67,22 @@ class Boss:
         (
             user_id,
             api_recipe_id,
-            xp_value
+            title,
+            xp_value,
+            image_url
         )
         VALUES
         (
             %(user_id)s,
             %(api_recipe_id)s,
-            %(xp_value)s
+            %(title)s,
+            %(xp_value)s,
+            %(image_url)s
         )
         ;
         """
-        connectToMySQL(cls.db).query_db(query, data)
-        return
+        result = connectToMySQL(cls.db).query_db(query, data)
+        return result
     
     # Read Boss
     
@@ -89,13 +113,14 @@ class Boss:
         query = """
         SELECT *
         FROM bosses
-        WHERE id = %(id)s
+        WHERE user_id = %(id)s
         ;
         """
         results = connectToMySQL(cls.db).query_db(query, data)
+        print(results)
         all_bosses = []
-        for boss in results:
-            all_bosses.append(cls(boss))
+        for row in results:
+            all_bosses.append(cls(row))
         return all_bosses
     
     @classmethod

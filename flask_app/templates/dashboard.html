@@ -6,7 +6,6 @@
         <script
             type="text/javascript"
             src="{{ url_for('static', filename='js/script.js') }}"
-            defer
         ></script>
         <link
             rel="stylesheet"
@@ -61,17 +60,30 @@
                 <table>
                     <thead>
                         <th>Name</th>
-                        <th>Spells Ready</th>
+                        <th></th>
                         <th>XP Value</th>
                         <th>Actions</th>
                     </thead>
+                    <tbody>
+                        {% with bosses = one_user.bosses %} {% for boss in
+                        bosses %}
+                        <td>{{boss.title}} {{boss.api_recipe_id}}</td>
+                        <td>
+                            <img
+                                style="width: 250px; height: auto"
+                                src="{{boss.image_url}}"
+                                alt=""
+                            />
+                        </td>
+                        <td>{{boss.xp_value}}</td>
+                        <td>
+                            <a href="/bosses/delete/{{boss.id}}">delete</a> |
+                            <a href="/bosses/defeat/{{boss.id}}">defeat</a> |
+                            <a href="/bosses/view/{{boss.id}}">view</a>
+                        </td>
+                        {% endfor %} {% endwith %}
+                    </tbody>
                 </table>
-                {% with bosses = one_user.bosses %} {% for boss in bosses %}
-                <td>{{boss.title}}</td>
-                <td>pending</td>
-                <td>pending</td>
-                <td>pending</td>
-                {% endfor %} {% endwith %}
                 <a href="/recipes/search">Recipe Search</a>
                 <a href="/ingredients/search">Ingredient Search</a>
             </div>

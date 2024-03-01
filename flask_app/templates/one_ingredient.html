@@ -58,7 +58,7 @@
                 /></label>
                 <p>If you're unsure, just check the Nutrition Facts.</p>
                 <label>One Charge of this spell is equal to: </label>
-                <input type="float" name="charge_value" />
+                <input type="float" name="charge_amount" />
                 <select name="charge_unit">
                     {% with possibleUnits = one_ingredient.possibleUnits %} {%
                     for item in possibleUnits %}

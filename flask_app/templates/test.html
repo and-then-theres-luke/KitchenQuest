@@ -1,62 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <script type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}" defer></script>
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
-        <title>Document</title>
+        <script
+            type="text/javascript"
+            src="{{ url_for('static', filename='js/script.js') }}"
+            defer
+        ></script>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static', filename='css/style.css') }}"
+        />
     </head>
     <body>
-        <table id="recipe_ingredient_table">
-            <thead>
-                <th>Spell</th>
-                <th>Recipe Calls For</th>
-                <th>One Charge is Equal To</th>
-                <th>Charges Needed</th>
-                <th>Actions</th>
-            </thead>
+        <table>
             <tbody>
-                <form action="/bosses/create" method="POST">
-                    {% for ingredient in one_recipe.extendedIngredients %}
-                    {% if ingredient.isSpell == False %}
-                    <tr>
-                        <!-- Spell Name -->
-                        <td>{{ingredient.name}}</td>
-                        <!-- recipe calls for -->
-                        <td><span id="amount_set_{{ingredient.id}}">{{ingredient.amount}}</span> {{ingredient.unit}}</td>
-                        <!-- one charge is equal to -->
-                        <td><input type="float" id="amount_{{ingredient.id}}"> {{ingredient.charge_unit}}</td>
-                        <!-- Charges needed -->
-                        <td id="charge_calculated_{{ingredient.id}}"></td>
-                        <!-- Calculate Charges -->
-                        <td><button type="button" onclick="calculate_charges({{ingredient.amount}}, document.querySelector('#amount_{{ingredient.id}}'), document.querySelector('#charge_calculated_{{ingredient.id}}'))"> Calculate Charges </button> </td>
-                    </tr>
-                    {% else %}
-                    <tr class="spellfound">
-                        <!-- Spell Name -->
-                        <td>{{ingredient.name}}</td>
-                        <!-- recipe calls for -->
-                        <td>>{{ingredient.amount}} {{ingredient.unit}}</td>
-                        <!-- one charge is equal to -->
-                        <td>{{ingredient.amount}} {{ingredient.unit}}</td>
-                        <!-- Charges needed -->
-                        <td></td>
-                        <!-- Calculate Charges -->
-                        <td></td>
-                    </tr>
-                    {% endif %}
-                    {% endfor %}
-                    <tr>
-                        <td><button type="submit">Create Boss</button></td>
-                    </tr>
-                </tbody>
-                </form>
-            <h2>Instructions</h2>
-            {% if instructions in one_recipe %}
-            <p>{{one_recipe.instructions|safe}}</p>
-            {% else %}
-            <p>No Instructions Provided</p>
-            {% endif %}
+                <tr>
+                    <td id="test_element"></td>
+                    <button
+                        onclick="calculate_charges(10,2,document.querySelector('#test_element'))"
+                    >
+                        Click Me!
+                    </button>
+                </tr>
+            </tbody>
+        </table>
     </body>
 </html>

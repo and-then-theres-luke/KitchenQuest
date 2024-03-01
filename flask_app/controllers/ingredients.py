@@ -18,7 +18,6 @@ def ingredient_search_frontend():
 
 @app.route("/ingredients/make_spell/", methods=["POST"])
 def make_spell_frontend():
-    print(request.form)
     data = {}
     for item in request.form:
         data[item] = request.form[item]
