@@ -19,60 +19,62 @@
         <main>
             <h1>Convert {{one_recipe.title}} to Boss</h1>
             <img src="{{one_recipe.image}}" alt="" />
-            <table id="recipe_ingredient_table">
-                <thead>
-                    <th>Spell</th>
-                    <th>Recipe Calls For</th>
-                    <th>One Charge is Equal To</th>
-                    <th>Charges Needed</th>
-                </thead>
-                <tbody>
-                    <form action="/bosses/create" method="POST">
-                        <input type="hidden" name="api_recipe_id" value="{{one_recipe.id}}">
-                        <input type="hidden" name="title" value="{{one_recipe.title}}">
-                        <input type="hidden" name="image_url" value="{{one_recipe.image}}">
-                        {% for ingredient in one_recipe.extendedIngredients %}
-                        {% if ingredient.isSpell == False %}
-                        <tr>
-                            <!-- Inputs -->
-                            <input type="hidden" name="ingredient_index_{{loop.index}}_api_ingredient_id" value="{{ingredient.id}}">
-                            <input type="hidden" name="ingredient_index_{{loop.index}}_name" value="{{ingredient.nameClean}}">
-                            <input type="hidden" name="ingredient_index_{{loop.index}}_amount" value="{{ingredient.amount}}">
-                            <input type="hidden" name="ingredient_index_{{loop.index}}_unit" value="{{ingredient.unit}}">
-                            <input type="hidden" name="ingredient_index_{{loop.index}}_charge_unit" value="{{ingredient.unit}}">
-                            <!-- Spell Name -->
-                            <td>{{ingredient.nameClean}}</td>
-                            <!-- recipe calls for -->
-                            <td><span id="ingredient_index_{{loop.index}}_amount">{{ingredient.amount}}</span> {{ingredient.unit}}</td>
-                            <!-- one charge is equal to -->
-                            <td><input type="float" name="ingredient_index_{{loop.index}}_charge_amount" oninput="calculate_charges(document.querySelector('#ingredient_index_{{loop.index}}_amount'), this, document.querySelector('#charge_calculated_{{ingredient.id}}'))"> <span>{{ingredient.charge_unit}}</span></td>
-                            <!-- Charges needed -->
-                            <td id="charge_calculated_{{ingredient.id}}"></td>
-                            <!-- This is not passed in as an input, it's recalculated on the back end. -->
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <!-- Inputs -->
-                            <input type="hidden" name="ingredient_index_{{loop.index}}_api_ingredient_id" value="{{ingredient.id}}">
-                            <input type="hidden" name="ingredient_index_{{loop.index}}_name" value="{{ingredient.nameClean}}">
-                            <input type="hidden" name="ingredient_index_{{loop.index}}_amount" value="{{ingredient.amount}}">
-                            <input type="hidden" name="ingredient_index_{{loop.index}}_unit" value="{{ingredient.unit}}">
-                            <input type="hidden" name="ingredient_index_{{loop.index}}_charge_unit" value="{{ingredient.charge_unit}}">
-                            <input type="hidden" name="ingredient_index_{{loop.index}}_charge_amount" value="{{ingredient.charge_amount}}">
-                            <!-- Spell Name -->
-                            <td name="ingredient_index_{{loop.index}}_name">{{ingredient.name}}</td>
-                            <!-- recipe calls for -->
-                            <td>{{ingredient.amount}} {{ingredient.unit}}</td>
-                            <!-- one charge is equal to -->
-                            <td>{{ingredient.charge_amount}} {{ingredient.charge_unit}}</td>
-                            <!-- Charges needed -->
-                            <td>{{ingredient.amount / ingredient.charge_amount}}</td>
-                            <!-- Calculate Charges -->
-                        </tr>
-                        {% endif %}
-                        {% endfor %}
-                        <button>Submit Boss</button>
-                    </form>
+            <form action="/bosses/create" method="POST">
+                <table id="recipe_ingredient_table">
+                    <thead>
+                        <th>Spell</th>
+                        <th>Recipe Calls For</th>
+                        <th>One Charge is Equal To</th>
+                        <th>Charges Needed</th>
+                    </thead>
+                    <tbody>
+                            <input type="hidden" name="api_recipe_id" value="{{one_recipe.id}}">
+                            <input type="hidden" name="title" value="{{one_recipe.title}}">
+                            <input type="hidden" name="image_url" value="{{one_recipe.image}}">
+                            {% for ingredient in one_recipe.extendedIngredients %}
+                            {% if ingredient.isSpell == False %}
+                            <tr>
+                                <!-- Inputs -->
+                                <input type="hidden" name="ingredient_index_{{loop.index}}_api_ingredient_id" value="{{ingredient.id}}">
+                                <input type="hidden" name="ingredient_index_{{loop.index}}_name" value="{{ingredient.nameClean}}">
+                                <input type="hidden" name="ingredient_index_{{loop.index}}_amount" value="{{ingredient.amount}}">
+                                <input type="hidden" name="ingredient_index_{{loop.index}}_unit" value="{{ingredient.unit}}">
+                                <input type="hidden" name="ingredient_index_{{loop.index}}_charge_unit" value="{{ingredient.unit}}">
+                                <!-- Spell Name -->
+                                <td>{{ingredient.nameClean}}</td>
+                                <!-- recipe calls for -->
+                                <td><span id="ingredient_index_{{loop.index}}_amount">{{ingredient.amount}}</span> {{ingredient.unit}}</td>
+                                <!-- one charge is equal to -->
+                                <td><input type="float" name="ingredient_index_{{loop.index}}_charge_amount" oninput="calculate_charges(document.querySelector('#ingredient_index_{{loop.index}}_amount'), this, document.querySelector('#charge_calculated_{{ingredient.id}}'))"> <span>{{ingredient.charge_unit}}</span></td>
+                                <!-- Charges needed -->
+                                <td id="charge_calculated_{{ingredient.id}}"></td>
+                                <!-- This is not passed in as an input, it's recalculated on the back end. -->
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <!-- Inputs -->
+                                <input type="hidden" name="ingredient_index_{{loop.index}}_api_ingredient_id" value="{{ingredient.id}}">
+                                <input type="hidden" name="ingredient_index_{{loop.index}}_name" value="{{ingredient.nameClean}}">
+                                <input type="hidden" name="ingredient_index_{{loop.index}}_amount" value="{{ingredient.amount}}">
+                                <input type="hidden" name="ingredient_index_{{loop.index}}_unit" value="{{ingredient.unit}}">
+                                <input type="hidden" name="ingredient_index_{{loop.index}}_charge_unit" value="{{ingredient.charge_unit}}">
+                                <input type="hidden" name="ingredient_index_{{loop.index}}_charge_amount" value="{{ingredient.charge_amount}}">
+                                <!-- Spell Name -->
+                                <td name="ingredient_index_{{loop.index}}_name">{{ingredient.name}}</td>
+                                <!-- recipe calls for -->
+                                <td>{{ingredient.amount}} {{ingredient.unit}}</td>
+                                <!-- one charge is equal to -->
+                                <td>{{ingredient.charge_amount}} {{ingredient.charge_unit}}</td>
+                                <!-- Charges needed -->
+                                <td>{{ingredient.amount / ingredient.charge_amount}}</td>
+                                <!-- Calculate Charges -->
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                    </tbody>
+                </table>
+            <button>Submit Boss</button>
+            </form>
             </div>
         </main>
     </body>

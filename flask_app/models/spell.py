@@ -70,8 +70,6 @@ class Spell:
 
     # Read Spell Models
     
-    
-    
     @classmethod
     def get_spell_by_id(cls,spell_id):
         data = {
@@ -124,16 +122,14 @@ class Spell:
     
     # Update Spell Models
     @classmethod
-    def reduce_charges(cls,hits,spell_id):
-        if not cls.validate_hits(hits,spell_id):
-            return False
+    def reduce_charges(cls, spell_id, current_charges, charges_needed):
         data = {
             'id' : spell_id,
-            'hits' : hits
+            'current_charges' : float(current_charges) - float(charges_needed)
         }
         query = """
         UPDATE spells
-        SET current_charges = (current_charges - %(hits)s)
+        SET current_charges = %(current_charges)s
         WHERE id = %(id)s
         """
         connectToMySQL(cls.db).query_db(query, data)
@@ -184,42 +180,3 @@ class Spell:
             flash("Expiration date cannot be in the past.","new_spell")
             isValid = False
         return isValid
-    
-    @classmethod
-    def validate_hits(cls, hits, spell_id):
-        one_spell = cls.get_spell_by_id(spell_id)
-        if one_spell.current_charges < hits:
-            flash("Cannot perform, hits exceed number of charges.","cast_spell")
-        
-    
-    
-
-    # Lets save this for if we need it later....
-    # @staticmethod
-    # def conversion_route_method(starting_unit, initial_value, ending_unit):
-    #     if starting_unit == "t" or starting_unit == "tsp" or starting_unit == "teaspoon":
-    #         pass
-    #         # TSP conversion method
-    #     elif starting_unit == 'T' or starting_unit == 'TB' or starting_unit == 'Tbsp' or starting_unit == 'Tablespoon' or starting_unit == 'tablespoon':
-    #         pass
-    #     elif starting_unit == 'C' or starting_unit == 'Cup' or starting_unit == 'cup' or starting_unit == 'c':
-    #         pass
-    #     elif starting_unit == 'Pint' or starting_unit == 'pint' or starting_unit == 'p' or starting_unit == 'pt':
-    #         pass
-    #     elif starting_unit == 'Quart' or starting_unit == 'quart' or starting_unit == 'qt' or starting_unit == 'Qt':
-    #         pass
-    #     elif starting_unit == 'Gallon' or starting_unit == 'Gal' or starting_unit == 'gal' or starting_unit == 'gallon':
-    #         pass
-    #     elif starting_unit == 'Ounce' or starting_unit == 'ounce' or starting_unit == 'oz':
-    #         pass
-    #     elif starting_unit == 'Fluid ounce' or starting_unit == 'fluid ounce' or starting_unit == 'fl oz' or starting_unit == 'fl. oz.':
-    #         pass
-    #     elif starting_unit = 
-    
-    # @staticmethod
-    # def dry_ingredient_conversion_method():
-        
-    # @staticmethod
-    # def wet_ingredient_conversion_method():
-    
-    

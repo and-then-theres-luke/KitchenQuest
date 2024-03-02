@@ -19,6 +19,7 @@ class User:
         self.last_name = data['last_name']
         self.email = data['email']
         self.password = data['password']
+        self.xp = data['xp']
         self.spellbook = []
         self.saved_recipes = []
         self.bosses = []
@@ -40,14 +41,16 @@ class User:
                     first_name, 
                     last_name, 
                     email, 
-                    password
+                    password,
+                    xp
                 ) 
             VALUES 
                 (
                     %(first_name)s, 
                     %(last_name)s, 
                     %(email)s, 
-                    %(password)s
+                    %(password)s,
+                    0
                 )
             ;
             """
@@ -130,6 +133,20 @@ class User:
         connectToMySQL(cls.db).query_db(query, data)
         return
 
+    @classmethod
+    def gain_xp(cls, xp_value):
+        data = {
+            'id' : session['user_id'],
+            'xp_value' : xp_value
+        }
+        query = """
+        UPDATE users
+        SET xp = (xp + %(xp_value)s)
+        WHERE id = %(id)s
+        ;
+        """
+        connectToMySQL(cls.db).query_db(query, data)
+        return
 
     # Delete Users Models
     @classmethod

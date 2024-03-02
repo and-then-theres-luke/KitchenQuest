@@ -20,7 +20,7 @@ class Boss:
         self.title = data['title']
         self.xp_value = data['xp_value']
         self.image_url = data['image_url']
-        self.spells_needed = []
+        self.required_spells = []
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
     
@@ -32,20 +32,20 @@ class Boss:
         cleaned_inputs = []
         for item in inputs:
             cleaned_inputs.append(inputs[item])
-        # xp_value = 0
-        # for row in inputs:
-        #     xp_value += 1
-        # xp_value = (xp_value / 6) * 25
-        # boss_data = {
-        #     'user_id' : session['user_id'],
-        #     'api_recipe_id' : inputs['api_recipe_id'], # Index 0
-        #     'title' : inputs['title'], # Index 1
-        #     'image_url' : inputs['image_url'], # Index 2
-        #     'xp_value' : xp_value
-        # }
-        # boss_id = cls.create_boss(boss_data)
+        xp_value = 0
+        for row in inputs:
+            xp_value += 1
+        xp_value = (xp_value / 6) * 25
+        boss_data = {
+            'user_id' : session['user_id'],
+            'api_recipe_id' : inputs['api_recipe_id'], # Index 0
+            'title' : inputs['title'], # Index 1
+            'image_url' : inputs['image_url'], # Index 2
+            'xp_value' : xp_value
+        }
+        boss_id = cls.create_boss(boss_data)
         ingredient_data = {
-            'boss_id' : 1,
+            'boss_id' : boss_id,
         }
         index = 3
         while (index < len(cleaned_inputs)-1):
@@ -94,15 +94,51 @@ class Boss:
         query = """
         SELECT *
         FROM bosses
-        WHERE id = %(id)s
+        JOIN required_spells
+        ON bosses.id = required_spells.boss_id
+        WHERE bosses.id = %(id)s
         ;
         """
         results = connectToMySQL(cls.db).query_db(query, data)
-        one_boss = cls(results[0])
-        recipe_model = recipe.Recipe.get_recipe_by_api_recipe_id(one_boss.api_recipe_id)
-        for ingredient in recipe_model.extended_ingredients:
-            one_boss.spells_needed.append(recipe.Recipe(ingredient))
-        print(one_boss.spells_needed)
+        boss_data = {
+            'id' : boss_id,
+            'title' : results[0]['title'],
+            'user_id' : results[0]['user_id'],
+            'api_recipe_id' : results[0]['api_recipe_id'],
+            'xp_value' : results[0]['xp_value'],
+            'image_url' : results[0]['image_url'],
+            'created_at' : results[0]['created_at'],
+            'updated_at' : results[0]['updated_at']
+        }
+        one_boss = cls(boss_data)
+        list_of_required_spells = []
+        for row in results:
+            required_spell_data = {
+                'id' : row['required_spells.id'],
+                'boss_id' : boss_id,
+                'api_ingredient_id' : row['api_ingredient_id'],
+                'name' : row['name'],
+                'amount' : row['amount'],
+                'unit' : row['unit'],
+                'charge_amount' : row['charge_amount'],
+                'charge_unit' : row['charge_unit'],
+                'charges_needed' : row['charges_needed'],
+                'created_at' : row['required_spells.created_at'],
+                'updated_at' : row['required_spells.updated_at']
+            }
+            list_of_required_spells.append(required_spells.Required_Spells(required_spell_data))
+        spellbook = spell.Spell.get_spellbook_by_user_id(session['user_id'])
+        for one_required_spell in list_of_required_spells:
+            isSpell = False
+            isEnoughCharges = False
+            for one_spell in spellbook:
+                if one_required_spell.api_ingredient_id == one_spell.api_ingredient_id:
+                    isSpell = True
+                    if one_spell.current_charges > one_required_spell.charges_needed:
+                        isEnoughCharges = True
+            one_required_spell.isSpell = isSpell
+            one_required_spell.isEnoughCharges = isEnoughCharges
+        one_boss.required_spells = list_of_required_spells
         return one_boss
         
     @classmethod
@@ -117,7 +153,6 @@ class Boss:
         ;
         """
         results = connectToMySQL(cls.db).query_db(query, data)
-        print(results)
         all_bosses = []
         for row in results:
             all_bosses.append(cls(row))
@@ -140,3 +175,30 @@ class Boss:
         if not results:
             return False
         return cls(results[0])
+    
+    @classmethod
+    def defeat_boss(cls, boss_id):
+        isBeaten = True
+        one_boss = cls.get_one_boss_by_id(boss_id)
+        spellbook = spell.Spell.get_spellbook_by_user_id(session['user_id'])
+        for one_required_spell in one_boss.required_spells:
+            print(one_required_spell)
+            for one_spell in spellbook:
+                print(one_spell)
+                if one_spell.api_ingredient_id == one_required_spell.api_ingredient_id:
+                    print("Match!")
+                    if one_required_spell.charges_needed < one_spell.current_charges:
+                        flash("Missing spells, cannot perform.")
+                        isMissingIngredient = False
+                    else:
+                        spell.Spell.reduce_charges(one_spell.id, one_spell.current_charges, one_required_spell.charges_needed)
+                    break
+                else:
+                    print("no match found...")
+        if isBeaten == True:
+            print("have some experience points!")
+            user.User.gain_xp(one_boss.xp_value)
+        return isBeaten
+        
+                    
+        

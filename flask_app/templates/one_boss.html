@@ -2,7 +2,10 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
         <script
             type="text/javascript"
             src="{{ url_for('static', filename='js/script.js') }}"
@@ -29,7 +32,60 @@
         </div>
         <main>
             <h2>{{one_boss.title}}</h2>
-            <img src="" alt="" />
+            <img
+                src="{{one_boss.image_url}}"
+                alt=""
+            />
+                <table id="recipe_ingredient_table">
+                    <thead>
+                        <th>Spell</th>
+                        <th>Recipe Calls For</th>
+                        <th>One Charge is Equal To</th>
+                        <th>Charges Needed</th>
+                        <th>Spell in Spellbook?</th>
+                        <th>Enough Charges?</th>
+                        <th>Actions</th>
+                    </thead>
+                    {% with required_spells = one_boss.required_spells %} 
+                    <tbody>
+                        {% for one_required_spell in required_spells %}
+                        <tr>
+                            <td>{{one_required_spell.name}}</td>
+                            <td>
+                                {{one_required_spell.amount}}
+                                {{one_required_spell.unit}}
+                            </td>
+                            <td>
+                                {{one_required_spell.charge_amount}}
+                                {{one_required_spell.charge_unit}}
+                            </td>
+                            <td>{{one_required_spell.charges_needed}}</td>
+                            {% if one_required_spell.isSpell == False%}
+                            <td>No</td>
+                            {% else %}
+                            <td>Yes</td>
+                            {% endif %} {% if one_required_spell.isEnoughCharges
+                            == False%}
+                            <td>No</td>
+                            {% else %}
+                            <td>Yes</td>
+                            {% endif %}
+                            <td>
+                                {% if one_required_spell.isEnoughCharges ==
+                                False or one_required_spell.isSpell == False %}
+                                <a
+                                    href="/ingredients/show_one/{{one_required_spell.api_ingredient_id}}"
+                                    >Add To Spellbook</a
+                                >
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    {% endwith %}
+                </table>
+                    <a href="/bosses/defeat/{{one_boss.id}}">Defeat This Boss</a>
+            </form>
         </main>
     </body>
 </html>

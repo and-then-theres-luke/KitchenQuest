@@ -2,7 +2,10 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
         <script
             type="text/javascript"
             src="{{ url_for('static', filename='js/script.js') }}"
@@ -29,6 +32,7 @@
         </div>
         <main class="dashboard_main">
             <div class="dashboard_left_col">
+                <h2>Current XP: {{one_user.xp}}</h2>
                 <h2>Spellbook</h2>
                 <table id="decktable">
                     <thead>
@@ -67,20 +71,24 @@
                     <tbody>
                         {% with bosses = one_user.bosses %} {% for boss in
                         bosses %}
-                        <td>{{boss.title}} {{boss.api_recipe_id}}</td>
-                        <td>
-                            <img
-                                style="width: 250px; height: auto"
-                                src="{{boss.image_url}}"
-                                alt=""
-                            />
-                        </td>
-                        <td>{{boss.xp_value}}</td>
-                        <td>
-                            <a href="/bosses/delete/{{boss.id}}">delete</a> |
-                            <a href="/bosses/defeat/{{boss.id}}">defeat</a> |
-                            <a href="/bosses/view/{{boss.id}}">view</a>
-                        </td>
+                        <tr>
+                            <td>{{boss.title}} {{boss.api_recipe_id}}</td>
+                            <td>
+                                <img
+                                    style="width: 250px; height: auto"
+                                    src="{{boss.image_url}}"
+                                    alt=""
+                                />
+                            </td>
+                            <td>{{boss.xp_value}}</td>
+                            <td>
+                                <a href="/bosses/delete/{{boss.id}}">delete</a>
+                                |
+                                <a href="/bosses/defeat/{{boss.id}}">defeat</a>
+                                |
+                                <a href="/bosses/view/{{boss.id}}">view</a>
+                            </td>
+                        </tr>
                         {% endfor %} {% endwith %}
                     </tbody>
                 </table>
