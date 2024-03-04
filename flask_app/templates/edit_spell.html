@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <script
+            type="text/javascript"
+            src="{{ url_for('static', filename='js/script.js') }}"
+            defer
+        ></script>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static', filename='css/style.css') }}"
+        />
+        <title>KitchenQuest - Edit {{one_spell.name}} Spell</title>
+    </head>
+    <body>
+        <div class="header">
+            <div class="header-left">
+                <h1>KitchenQuest</h1>
+                <p>Track Ingredients | Fight Bosses | Eat Well</p>
+            </div>
+            <div class="header-right">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/spellbook">Spellbook</a>
+                <a href="/recipes">Boss Menu</a>
+            </div>
+        </div>
+        <main>
+            <h1>Edit {{one_spell.name}} Spell</h1>
+            <img
+                src=""
+                alt=""
+            />
+            <form
+                action="/spells/edit/process"
+                method="POST"
+            >
+                <input
+                    type="hidden"
+                    value="{{one_spell.id}}"
+                    name="id"
+                />
+                <input
+                    type="hidden"
+                    value="{{one_spell.name}}"
+                    name="name"
+                />
+                <input
+                    type="hidden"
+                    value="{{session['user_id']}}"
+                    name="user_id"
+                />
+                <label
+                    >Number of Charges (servings):<input
+                        type="number"
+                        min="1"
+                        name="current_charges"
+                        id="current_charges"
+                        value="{{one_spell.current_charges}}"
+                /></label>
+                <p>If you're unsure, just check the Nutrition Facts.</p>
+                <label>One Charge of this spell is equal to: </label>
+                <input
+                    type="float"
+                    name="charge_amount"
+                    value="{{one_spell.charge_amount}}"
+                />
+                <p>{{one_spell.charge_unit}}</p>
+                <label
+                    >This Spell expires on:
+                    <input
+                        type="date"
+                        name="expiration_date"
+                        value="{{one_spell.expiration_date}}"
+                /></label>
+                <button>Update Spell</button>
+            </form>
+            {% with messages = get_flashed_messages()%} {% if messages%} {% for
+            message in messages %}
+            <p style="color: red">{{ message }}</p>
+            {% endfor %} {% endif %} {% endwith %}
+        </main>
+    </body>
+</html>

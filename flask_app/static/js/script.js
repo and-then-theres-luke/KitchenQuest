@@ -98,11 +98,12 @@ const expiration_bars = (statusdiv, expiration_date) => {
     } else if (days_to_expire <= 3) {
         style_box = style_box + "background-color : red;";
     }
-    style_width = days_to_expire * 100;
+    style_width = days_to_expire * 10;
     if (style_width > 600) {
         style_width = 600;
     }
     style_box = style_box + `width: ${style_width}px;`;
+    console.log(style_box);
     statusdiv.style = style_box;
 };
 

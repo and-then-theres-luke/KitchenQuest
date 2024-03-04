@@ -38,10 +38,15 @@ class Ingredient:
     
     @staticmethod
     def convert_amounts(api_ingredient_id, charge_amount, charge_unit, target_unit):
-        query = """https://api.spoonacular.com/recipes/convert?ingredientName=""" + str(api_ingredient_id) + """&sourceAmount=""" + str(charge_amount) + """&sourceUnit=""" + str(charge_unit) + """&targetUnit=""" + str(target_unit) + """&apiKey=""" + str(API_KEY)
-        print("Converting " + str(charge_amount) + " " + str(charge_unit) + "to " + str(target_unit))
-        res = requests.get(query)
-        results = res.json()
-        targetAmount = results['targetAmount']
-        print("Result is: " + str(charge_amount) + " " + str(charge_unit) + " is equal to " + str(targetAmount) + " " + str(target_unit))
+        print(api_ingredient_id, charge_amount, charge_unit, target_unit)
+        if target_unit == "":
+            targetAmount = charge_amount
+        else:
+            query = """https://api.spoonacular.com/recipes/convert?ingredientName=""" + str(api_ingredient_id) + """&sourceAmount=""" + str(charge_amount) + """&sourceUnit=""" + str(charge_unit) + """&targetUnit=""" + str(target_unit) + """&apiKey=""" + str(API_KEY)
+            print("Converting " + str(charge_amount) + " " + str(charge_unit) + "to " + str(target_unit))
+            res = requests.get(query)
+            results = res.json()
+            print(results)
+            targetAmount = results['targetAmount']
+            print("Result is: " + str(charge_amount) + " " + str(charge_unit) + " is equal to " + str(targetAmount) + " " + str(target_unit))
         return targetAmount

@@ -26,4 +26,9 @@ def defeat_boss_frontend(boss_id):
     boss.Boss.defeat_boss(boss_id)
     return redirect("/dashboard")
 
-    
+@app.route('/bosses/delete/<int:boss_id>')
+def delete_boss_frontend(boss_id):
+    if 'user_id' not in session:
+        return redirect("/login")
+    boss.Boss.delete_boss(boss_id)
+    return redirect('/dashboard')

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <script
+            type="text/javascript"
+            src="{{ url_for('static', filename='js/script.js') }}"
+            defer
+        ></script>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static', filename='css/style.css') }}"
+        />
+        <title>Document</title>
+    </head>
+    <body>
+        <div class="header">
+            <div class="header-left">
+                <h1>KitchenQuest</h1>
+                <p>Track Ingredients | Fight Bosses | Eat Well</p>
+            </div>
+            <div class="header-right">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/spellbook">Spellbook</a>
+                <a href="/recipes">Boss Menu</a>
+            </div>
+        </div>
+        <main>
+            <h1>{{ one_spell.name }} Spell</h1>
+            <img
+                src="https://spoonacular.com/cdn/ingredients_500x500/{{
+                    one_spell.id
+                }}"
+                alt=""
+            />
+            <p>Number of Charges: {{ one_spell.current_charges }}</p>
+            <p>
+                One Charge is equal to: {{one_spell.charge_amount}}
+                {{one_spell.charge_unit}}
+            </p>
+            <p>Expires On: {{one_spell.expiration_date}}</p>
+            <p>
+                <a href="/spells/edit/{{one_spell.id}}">Edit</a> |
+                <a href="/spells/delete/{{one_spell.id}}">Delete</a>
+            </p>
+        </main>
+    </body>
+</html>

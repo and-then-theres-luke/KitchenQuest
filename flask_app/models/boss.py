@@ -53,10 +53,7 @@ class Boss:
             ingredient_data['name'] = cleaned_inputs[index+1]
             ingredient_data['amount'] = cleaned_inputs[index+2]
             ingredient_data['unit'] = cleaned_inputs[index+3]
-            ingredient_data['charge_unit'] = cleaned_inputs[index+4]
-            ingredient_data['charge_amount'] = cleaned_inputs[index+5]
-            ingredient_data['charges_needed'] = float(cleaned_inputs[index+2]) / float(cleaned_inputs[index+5])
-            index += 6
+            index += 4
             required_spells.Required_Spells.create_required_spell(ingredient_data)
         
     
@@ -120,21 +117,25 @@ class Boss:
                 'name' : row['name'],
                 'amount' : row['amount'],
                 'unit' : row['unit'],
-                'charge_amount' : row['charge_amount'],
-                'charge_unit' : row['charge_unit'],
-                'charges_needed' : row['charges_needed'],
                 'created_at' : row['required_spells.created_at'],
                 'updated_at' : row['required_spells.updated_at']
             }
             list_of_required_spells.append(required_spells.Required_Spells(required_spell_data))
         spellbook = spell.Spell.get_spellbook_by_user_id(session['user_id'])
         for one_required_spell in list_of_required_spells:
+            print("Running loop for required spell", one_required_spell.name)
             isSpell = False
             isEnoughCharges = False
             for one_spell in spellbook:
                 if one_required_spell.api_ingredient_id == one_spell.api_ingredient_id:
                     isSpell = True
-                    if one_spell.current_charges > one_required_spell.charges_needed:
+                    one_required_spell.charge_amount = ingredient.Ingredient.convert_amounts(one_required_spell.api_ingredient_id, one_spell.charge_amount, one_spell.charge_unit, one_required_spell.unit)
+                    one_required_spell.charge_unit = one_required_spell.unit
+                    # Converts the charge amount and charge unit from the spell to be read in an understandable way by the program
+                    if one_required_spell.charge_amount <= 0:
+                        one_required_spell.charge_amount = 0.01
+                    one_required_spell.charges_needed = one_required_spell.amount / one_required_spell.charge_amount
+                    if one_spell.current_charges >= one_required_spell.charges_needed:
                         isEnoughCharges = True
             one_required_spell.isSpell = isSpell
             one_required_spell.isEnoughCharges = isEnoughCharges
@@ -189,9 +190,11 @@ class Boss:
                     print("Match!")
                     if one_required_spell.charges_needed < one_spell.current_charges:
                         flash("Missing spells, cannot perform.")
-                        isMissingIngredient = False
+                        isBeaten = False
                     else:
-                        spell.Spell.reduce_charges(one_spell.id, one_spell.current_charges, one_required_spell.charges_needed)
+                        if not spell.Spell.reduce_charges(one_spell.id, one_spell.current_charges, one_required_spell.charges_needed):
+                            flash("Not enough charges in your " + one_spell.name + " spell.")
+                            isBeaten = False
                     break
                 else:
                     print("no match found...")
@@ -200,5 +203,19 @@ class Boss:
             user.User.gain_xp(one_boss.xp_value)
         return isBeaten
         
-                    
-        
+    @classmethod
+    def delete_boss(cls, id):
+        data = {
+            'id' : id
+        }
+        boss_query = """
+        DELETE FROM bosses
+        WHERE id = %(id)s
+        ;"""
+        required_spells_query = """
+        DELETE FROM required_spells
+        WHERE boss_id = %(id)s
+        """
+        connectToMySQL(cls.db).query_db(boss_query, data)
+        connectToMySQL(cls.db).query_db(required_spells_query, data)
+        return

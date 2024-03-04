@@ -15,10 +15,10 @@ class Spell:
         self.user_id = data['user_id']              # ID for the user whose pantry that ingredient is in
         self.api_ingredient_id = data['api_ingredient_id']  # ID for the actual ingredient data according to api
         self.name = data['name']
-        self.charge_amount = data['charge_amount']
-        self.charge_unit = data['charge_unit']
         self.current_charges = data['current_charges']
         self.max_charges = data['max_charges']
+        self.charge_amount = data['charge_amount']
+        self.charge_unit = data['charge_unit']
         self.expiration_date = data['expiration_date'] # created_at(day) minus expiration I know it's pseudo code, shut up.
         self.isFrozen = data['isFrozen']
         self.created_at = data['created_at']
@@ -81,10 +81,10 @@ class Spell:
         WHERE spells.id = %(id)s
         ;
         """
-        one_spell = connectToMySQL(cls.db).query_db(query, data)
-        if not one_spell:
+        results = connectToMySQL(cls.db).query_db(query, data)
+        if not results:
             return False
-        return one_spell
+        return cls(results[0])
     
     @classmethod
     def get_spellbook_by_user_id(cls, user_id):
@@ -117,12 +117,23 @@ class Spell:
         results = connectToMySQL(cls.db).query_db(query, data)
         one_spellbook = []
         for row in results:
-            one_spellbook.append(row)
+            one_spellbook.append(cls(row))
+        for spell in one_spellbook:
+            if spell.current_charges <= 0:
+                cls.delete_spell_by_id(spell.id)
         return one_spellbook
     
     # Update Spell Models
     @classmethod
+    def update_spell(cls, data):
+        print(data)
+        return
+    
+    
+    @classmethod
     def reduce_charges(cls, spell_id, current_charges, charges_needed):
+        if float(current_charges) - float(charges_needed) < 0:
+            return False
         data = {
             'id' : spell_id,
             'current_charges' : float(current_charges) - float(charges_needed)

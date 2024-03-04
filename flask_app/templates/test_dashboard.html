@@ -100,10 +100,6 @@
             </div>
             <div class="dashboard_right_col">
                 <h2>Upcoming Bosses</h2>
-                {% with messages = get_flashed_messages()%} {% if messages%} {% for
-                    message in messages %}
-                    <p style="color: red">{{ message }}</p>
-                    {% endfor %} {% endif %} {% endwith %}
                 <table>
                     <thead>
                         <th>Name</th>

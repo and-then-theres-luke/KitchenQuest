@@ -14,11 +14,11 @@ class Required_Spells:
         self.name = data['name']
         self.amount = data['amount']
         self.unit = data['unit']
-        self.charge_amount = data['charge_amount']
-        self.charge_unit = data['charge_unit']
-        self.charges_needed = data['charges_needed']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
+        self.charge_value = None
+        self.charge_amount = None
+        self.charges_needed = None
         self.isSpell = None
         self.isEnoughCharges = None
         
@@ -32,20 +32,14 @@ class Required_Spells:
             api_ingredient_id, 
             name, 
             amount, 
-            unit, 
-            charge_amount, 
-            charge_unit, 
-            charges_needed
+            unit
         )
         VALUES (
             %(boss_id)s, 
             %(api_ingredient_id)s, 
             %(name)s, 
             %(amount)s, 
-            %(unit)s, 
-            %(charge_amount)s, 
-            %(charge_unit)s, 
-            %(charges_needed)s
+            %(unit)s
         )
         ;
         """
