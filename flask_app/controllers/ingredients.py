@@ -6,6 +6,8 @@ import requests
 # Show One Ingredient
 @app.route('/ingredients/show_one/<string:ingredient_id>')
 def show_one_ingredient(ingredient_id):
+    if "user_id" not in session:
+        return redirect("/login")
     one_ingredient = ingredient.Ingredient.get_ingredient_by_api_ingredient_id(ingredient_id)
     return render_template("one_ingredient.html", one_ingredient = one_ingredient)
 
@@ -18,6 +20,8 @@ def ingredient_search_frontend():
 
 @app.route("/ingredients/make_spell/", methods=["POST"])
 def make_spell_frontend():
+    if "user_id" not in session:
+        return redirect("/login")
     data = {}
     for item in request.form:
         data[item] = request.form[item]

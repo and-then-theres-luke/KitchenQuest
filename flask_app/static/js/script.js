@@ -88,7 +88,8 @@ const expiration_bars = (statusdiv, expiration_date) => {
     let year = date.getFullYear();
     let current_date = `${year}${month}${day}`;
 
-    let days_to_expire = Math.abs(expiration_date - current_date);
+    let days_to_expire = expiration_date - current_date;
+    console.log(days_to_expire);
 
     style_box = "height: 10px;";
     if (days_to_expire > 5) {
@@ -99,8 +100,8 @@ const expiration_bars = (statusdiv, expiration_date) => {
         style_box = style_box + "background-color : red;";
     }
     style_width = days_to_expire * 10;
-    if (style_width > 600) {
-        style_width = 600;
+    if (style_width > 400) {
+        style_width = 400;
     }
     style_box = style_box + `width: ${style_width}px;`;
     console.log(style_box);

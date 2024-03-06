@@ -9,28 +9,64 @@
         <script
             type="text/javascript"
             src="{{ url_for('static', filename='js/script.js') }}"
+            defer
         ></script>
         <link
             rel="stylesheet"
             type="text/css"
-            href="{{ url_for('static', filename='css/style.css') }}"
+            href="../../static/css/bootstrap.css"
         />
-        <title>KitchenQuest - Recipe Conversion</title>
+        <title>KitchenQuest - View {{one_recipe.title}}</title>
     </head>
     <body>
-        <div class="header">
-            <h1>KitchenQuest</h1>
-            <div>
-                <p>Logout</p>
-                <p>View Pantry Deck</p>
-                <p>View Calendar</p>
+        <div class="header-left">
+            <h1 class="h1 text-warning">KitchenQuest</h1>
+            <p class="h5 text-warning">Track Ingredients | Fight Bosses | Eat Well</p>
+        </div>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            aria-current="page"
+                            href="/dashboard"
+                            >Dashboard</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            aria-current="page"
+                            href="/ingredients/search"
+                            >Search Ingredients</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            aria-current="page"
+                            href="/recipes/search"
+                            >Search Recipes</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            aria-current="page"
+                            href="/logout"
+                            >Logout</a
+                        >
+                    </li>
+                </ul>
             </div>
         </div>
+    </nav>
         <main>
             <h2>Convert {{one_recipe.title}} to Boss</h2>
-            <img src="{{one_recipe.image}}" alt="" />
+            <img class="mb-3" src="{{one_recipe.image}}" alt="" />
             <form action="/bosses/create" method="POST">
-                <table id="recipe_ingredient_table">
+                <table class="table table-light" id="recipe_ingredient_table">
                     <thead>
                         <th>Spell</th>
                         <th>Recipe Calls For</th>
@@ -59,7 +95,7 @@
                                 <!-- Charges needed -->
                                 <td></td>
                                 <!-- Actions -->
-                                <td><a href="/ingredients/show_one/{{ingredient.id}}">Create Spell</a></td>
+                                <td><a class="btn btn-primary" href="/ingredients/show_one/{{ingredient.id}}">Create Spell</a></td>
                             </tr>
                             {% else %}
                             <tr>
@@ -77,7 +113,7 @@
                             {% endfor %}
                     </tbody>
                 </table>
-            <button>Submit Boss</button>
+            <button class="btn btn-primary">Submit Boss</button>
             </form>
             </div>
         </main>

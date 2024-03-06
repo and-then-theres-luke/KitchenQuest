@@ -2,7 +2,10 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
         <script
             type="text/javascript"
             src="{{ url_for('static', filename='js/script.js') }}"
@@ -11,29 +14,61 @@
         <link
             rel="stylesheet"
             type="text/css"
-            href="{{ url_for('static', filename='css/style.css') }}"
+            href="../../static/css/bootstrap.css"
         />
-        <title>Document</title>
+        <title>KitchenQuest - {{one_ingredient.name}}</title>
     </head>
     <body>
-        <div class="header">
-            <div class="header-left">
-                <h1>KitchenQuest</h1>
-                <p>Track Ingredients | Fight Bosses | Eat Well</p>
-            </div>
-            <div class="header-right">
-                <a href="/dashboard">Dashboard</a>
-                <a href="/spellbook">Spellbook</a>
-                <a href="/recipes">Boss Menu</a>
+        <div class="header-left">
+            <h1 class="h1 text-warning">KitchenQuest</h1>
+            <p class="h5 text-warning">Track Ingredients | Fight Bosses | Eat Well</p>
+        </div>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            aria-current="page"
+                            href="/dashboard"
+                            >Dashboard</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            aria-current="page"
+                            href="/ingredients/search"
+                            >Search Ingredients</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            aria-current="page"
+                            href="/recipes/search"
+                            >Search Recipes</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            aria-current="page"
+                            href="/logout"
+                            >Logout</a
+                        >
+                    </li>
+                </ul>
             </div>
         </div>
+    </nav>
         <main>
             <h1>Create a new {{one_ingredient.name}} Spell</h1>
             <img
-                src="https://spoonacular.com/cdn/ingredients_500x500/{{one_ingredient.image}}"
+                src="https://spoonacular.com/cdn/ingredients_250x250/{{one_ingredient.image}}"
                 alt=""
             />
-            <form action="/ingredients/make_spell" method="POST">
+            <form class="ingredients_form" action="/ingredients/make_spell" method="POST">
                 <input
                     type="hidden"
                     value="{{one_ingredient.name}}"
@@ -53,10 +88,9 @@
                     >Number of Charges (servings):<input
                         type="number"
                         min="1"
-                        name="max_charges"
-                        id="max_charges"
+                        name="current_charges"
+                        id="current_charges"
                 /></label>
-                <p>If you're unsure, just check the Nutrition Facts.</p>
                 <label>One Charge of this spell is equal to: </label>
                 <input type="float" name="charge_amount" />
                 <select name="charge_unit">
@@ -69,11 +103,8 @@
                     >This Spell expires on:
                     <input type="date" name="expiration_date"
                 /></label>
-                <label
-                    >Freeze ingredient? Ingredients will not expire while frozen
-                    by default. <input type="checkbox" name="isFrozen"
-                /></label>
-                <button>Create Spell</button>
+                <input type="hidden" name="isFrozen" value="0">
+                <button class="btn btn-primary">Create Spell</button>
             </form>
             {% with messages = get_flashed_messages()%} {% if messages%} {% for
             message in messages %}

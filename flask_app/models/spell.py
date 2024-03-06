@@ -16,7 +16,6 @@ class Spell:
         self.api_ingredient_id = data['api_ingredient_id']  # ID for the actual ingredient data according to api
         self.name = data['name']
         self.current_charges = data['current_charges']
-        self.max_charges = data['max_charges']
         self.charge_amount = data['charge_amount']
         self.charge_unit = data['charge_unit']
         self.expiration_date = data['expiration_date'] # created_at(day) minus expiration I know it's pseudo code, shut up.
@@ -43,7 +42,6 @@ class Spell:
                     api_ingredient_id,
                     name,
                     current_charges,
-                    max_charges,
                     charge_amount,
                     charge_unit,
                     expiration_date,
@@ -54,8 +52,7 @@ class Spell:
                     %(user_id)s,
                     %(api_ingredient_id)s,
                     %(name)s,
-                    %(max_charges)s,
-                    %(max_charges)s,
+                    %(current_charges)s,
                     %(charge_amount)s,
                     %(charge_unit)s,
                     %(expiration_date)s,
@@ -126,9 +123,37 @@ class Spell:
     # Update Spell Models
     @classmethod
     def update_spell(cls, data):
-        print(data)
+        if not cls.validate_new_spell(data):
+            return False
+        query = """
+        UPDATE spells 
+        SET 
+            name = %(name)s,
+            current_charges = %(current_charges)s, 
+            charge_amount = %(charge_amount)s, 
+            expiration_date = %(expiration_date)s
+        WHERE id = %(id)s
+        ;
+        """
+        connectToMySQL(cls.db).query_db(query, data)
         return
     
+    
+    
+    @classmethod
+    def update_charges(cls, spell_id, current_charges):
+        data = {
+            'id' : spell_id,
+            'current_charges' : current_charges
+        }
+        query = """
+        UPDATE spells
+        SET current_charges = %(current_charges)s
+        WHERE id = %(id)s
+        ;
+        """
+        connectToMySQL(cls.db).query_db(query, data)
+        return
     
     @classmethod
     def reduce_charges(cls, spell_id, current_charges, charges_needed):
@@ -145,6 +170,7 @@ class Spell:
         """
         connectToMySQL(cls.db).query_db(query, data)
         return
+    
     
     @classmethod
     def freeze_or_defrost_ingredient(cls, pantry_ingredient_id, isFrozen):
@@ -184,7 +210,7 @@ class Spell:
     def validate_new_spell(data):
         isValid = True
         today = str(date.today())
-        if int(data['max_charges']) <= 0:
+        if int(data['current_charges']) <= 0:
             flash("Your ingredient needs at least one charge before you can add it to your pantry deck. Try again.","new_spell")
             isValid = False
         if data['expiration_date'] < today:

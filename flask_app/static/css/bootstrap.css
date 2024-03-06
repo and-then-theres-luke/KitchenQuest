@@ -12740,3 +12740,7 @@ main {
 .spellfound td {
     color: green;
 }
+
+.ingredients_form label {
+    display: block;
+}

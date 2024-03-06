@@ -2,7 +2,10 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
         <script
             type="text/javascript"
             src="{{ url_for('static', filename='js/script.js') }}"
@@ -13,7 +16,7 @@
             type="text/css"
             href="{{ url_for('static', filename='css/style.css') }}"
         />
-        <title>Document</title>
+        <title>KitchenQuest - Login</title>
     </head>
     <body>
         <h1>Welcome to KitchenQuest!</h1>
@@ -30,25 +33,53 @@
         {% endfor %} {% endwith %}
         <div>
             <h3>Login</h3>
-            <form action="/login/process" method="POST">
-                <label>Email: <input type="email" name="email" /></label>
+            <form
+                action="/login/process"
+                method="POST"
+            >
                 <label
-                    >Password: <input type="password" name="password"
+                    >Email:
+                    <input
+                        type="email"
+                        name="email"
+                /></label>
+                <label
+                    >Password:
+                    <input
+                        type="password"
+                        name="password"
                 /></label>
                 <button>Submit</button>
             </form>
             <h3>Register</h3>
-            <form action="/register" method="POST">
+            <form
+                action="/register"
+                method="POST"
+            >
                 <label
-                    >First Name:<input type="text" name="first_name"
+                    >First Name:<input
+                        type="text"
+                        name="first_name"
                 /></label>
-                <label>Last Name:<input type="text" name="last_name" /></label>
-                <label>Email:<input type="email" name="email" /></label>
                 <label
-                    >Password:<input type="password" name="password"
+                    >Last Name:<input
+                        type="text"
+                        name="last_name"
                 /></label>
                 <label
-                    >First Name:<input type="password" name="confirm_password"
+                    >Email:<input
+                        type="email"
+                        name="email"
+                /></label>
+                <label
+                    >Password:<input
+                        type="password"
+                        name="password"
+                /></label>
+                <label
+                    >First Name:<input
+                        type="password"
+                        name="confirm_password"
                 /></label>
                 <button>Submit</button>
             </form>

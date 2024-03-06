@@ -5,7 +5,7 @@ from flask import flash, session
 
 
 
-class Required_Spells:
+class Required_Spell:
     db = "kitchenquest"
     def __init__(self, data):
         self.id = data['id']
@@ -46,6 +46,36 @@ class Required_Spells:
         connectToMySQL(cls.db).query_db(query, data)
         return
         
-        # Read
-        # Update
-        # Delete
+    # Read
+    @classmethod
+    def get_required_spell(cls, required_spell_id):
+        
+        data = {
+            'id' : required_spell_id
+        }
+        query = """
+        SELECT *
+        FROM required_spells
+        WHERE id = %(id)s
+        ;
+        """
+        results = connectToMySQL(cls.db).query_db(query, data)
+        if not results:
+            return False
+        return cls(results[0])
+
+    # Update
+    # Delete
+    
+    @classmethod
+    def delete_required_spell(cls, id):
+        data = {
+            'id' : id
+        }
+        query = """
+        DELETE FROM required_spells
+        WHERE id = %(id)s
+        ;
+        """
+        connectToMySQL(cls.db).query_db(query, data)
+        return

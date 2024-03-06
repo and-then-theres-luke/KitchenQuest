@@ -1,6 +1,6 @@
 from flask_app import app
 from flask_app.config.mysqlconnection import connectToMySQL
-from flask_app.models import ingredient, spell, user, recipe, required_spells
+from flask_app.models import ingredient, required_spell, spell, user, recipe
 from datetime import date, timedelta
 from flask import flash, session
 from flask_app.api_key import API_KEY
@@ -54,7 +54,7 @@ class Boss:
             ingredient_data['amount'] = cleaned_inputs[index+2]
             ingredient_data['unit'] = cleaned_inputs[index+3]
             index += 4
-            required_spells.Required_Spells.create_required_spell(ingredient_data)
+            required_spell.Required_Spell.create_required_spell(ingredient_data)
         
     
     @classmethod
@@ -91,7 +91,7 @@ class Boss:
         query = """
         SELECT *
         FROM bosses
-        JOIN required_spells
+        LEFT JOIN required_spells
         ON bosses.id = required_spells.boss_id
         WHERE bosses.id = %(id)s
         ;
@@ -109,6 +109,8 @@ class Boss:
         }
         one_boss = cls(boss_data)
         list_of_required_spells = []
+        if results[0]['required_spells.id'] == None:
+            return one_boss
         for row in results:
             required_spell_data = {
                 'id' : row['required_spells.id'],
@@ -120,27 +122,13 @@ class Boss:
                 'created_at' : row['required_spells.created_at'],
                 'updated_at' : row['required_spells.updated_at']
             }
-            list_of_required_spells.append(required_spells.Required_Spells(required_spell_data))
+            list_of_required_spells.append(required_spell.Required_Spell(required_spell_data))
         spellbook = spell.Spell.get_spellbook_by_user_id(session['user_id'])
-        for one_required_spell in list_of_required_spells:
-            print("Running loop for required spell", one_required_spell.name)
-            isSpell = False
-            isEnoughCharges = False
-            for one_spell in spellbook:
-                if one_required_spell.api_ingredient_id == one_spell.api_ingredient_id:
-                    isSpell = True
-                    one_required_spell.charge_amount = ingredient.Ingredient.convert_amounts(one_required_spell.api_ingredient_id, one_spell.charge_amount, one_spell.charge_unit, one_required_spell.unit)
-                    one_required_spell.charge_unit = one_required_spell.unit
-                    # Converts the charge amount and charge unit from the spell to be read in an understandable way by the program
-                    if one_required_spell.charge_amount <= 0:
-                        one_required_spell.charge_amount = 0.01
-                    one_required_spell.charges_needed = one_required_spell.amount / one_required_spell.charge_amount
-                    if one_spell.current_charges >= one_required_spell.charges_needed:
-                        isEnoughCharges = True
-            one_required_spell.isSpell = isSpell
-            one_required_spell.isEnoughCharges = isEnoughCharges
+        list_of_required_spells = cls.check_for_required_spells(spellbook, list_of_required_spells)
         one_boss.required_spells = list_of_required_spells
         return one_boss
+        
+        
         
     @classmethod
     def get_all_bosses_by_user_id(cls, user_id):
@@ -159,49 +147,11 @@ class Boss:
             all_bosses.append(cls(row))
         return all_bosses
     
-    @classmethod
-    def get_boss_by_user_match_and_api_recipe_id(cls, user_id,api_recipe_id):
-        data = {
-            'user_id' : user_id,
-            'api_recipe_id' : api_recipe_id
-        }
-        query = """
-        SELECT *
-        FROM bosses
-        WHERE user_id = %(user_id)s
-        AND api_recipe_id = %(api_recipe_id)s
-        ;
-        """
-        results = connectToMySQL(cls.db).query_db(query, data)
-        if not results:
-            return False
-        return cls(results[0])
+    # Update Methods
     
-    @classmethod
-    def defeat_boss(cls, boss_id):
-        isBeaten = True
-        one_boss = cls.get_one_boss_by_id(boss_id)
-        spellbook = spell.Spell.get_spellbook_by_user_id(session['user_id'])
-        for one_required_spell in one_boss.required_spells:
-            print(one_required_spell)
-            for one_spell in spellbook:
-                print(one_spell)
-                if one_spell.api_ingredient_id == one_required_spell.api_ingredient_id:
-                    print("Match!")
-                    if one_required_spell.charges_needed < one_spell.current_charges:
-                        flash("Missing spells, cannot perform.")
-                        isBeaten = False
-                    else:
-                        if not spell.Spell.reduce_charges(one_spell.id, one_spell.current_charges, one_required_spell.charges_needed):
-                            flash("Not enough charges in your " + one_spell.name + " spell.")
-                            isBeaten = False
-                    break
-                else:
-                    print("no match found...")
-        if isBeaten == True:
-            print("have some experience points!")
-            user.User.gain_xp(one_boss.xp_value)
-        return isBeaten
+    
+        
+    # Delete Methods
         
     @classmethod
     def delete_boss(cls, id):
@@ -219,3 +169,51 @@ class Boss:
         connectToMySQL(cls.db).query_db(boss_query, data)
         connectToMySQL(cls.db).query_db(required_spells_query, data)
         return
+    
+    # Misc Methods
+    
+    @classmethod
+    def check_for_required_spells(cls, spellbook, list_of_required_spells):
+        for one_required_spell in list_of_required_spells:
+            isSpell = False
+            isEnoughCharges = False
+            for one_spell in spellbook:
+                if one_required_spell.api_ingredient_id == one_spell.api_ingredient_id:
+                    isSpell = True
+                    one_required_spell.charge_amount = ingredient.Ingredient.convert_amounts(one_required_spell.api_ingredient_id, one_spell.charge_amount, one_spell.charge_unit, one_required_spell.unit)
+                    one_required_spell.charge_unit = one_required_spell.unit
+                    # Converts the charge amount and charge unit from the spell to be read in an understandable way by the program
+            one_required_spell.isSpell = isSpell
+            if one_required_spell.isSpell == False:
+                flash("Your " + one_required_spell.name + " spell lacks the required charges.")
+            else:
+                if one_required_spell.charge_amount <= 0:
+                    one_required_spell.charge_amount = 0.01
+                one_required_spell.charges_needed = one_required_spell.amount / one_required_spell.charge_amount
+                if one_spell.current_charges >= one_required_spell.charges_needed:
+                    isEnoughCharges = True
+                else:
+                    isEnoughCharges = False
+            one_required_spell.isEnoughCharges = isEnoughCharges
+        return list_of_required_spells
+    
+    
+    
+    @classmethod
+    def defeat_boss(cls, boss_id):
+        isBeaten = True
+        one_boss = cls.get_one_boss_by_id(boss_id)
+        spellbook = spell.Spell.get_spellbook_by_user_id(session['user_id'])
+        list_of_required_spells = cls.check_for_required_spells(spellbook, one_boss.required_spells)
+        for required_spell in list_of_required_spells:
+            if required_spell.isEnoughCharges == False:
+                isBeaten = False
+            else:
+                for one_spell in spellbook:
+                    if one_spell.api_ingredient_id == required_spell.api_ingredient_id:
+                        one_spell.current_charges -= required_spell.charges_needed
+                        one_spell.update_charges(one_spell.id, one_spell.current_charges)
+        if isBeaten == True:
+            flash("Boss defeated! Gained " + str(one_boss.xp_value) + " experience points.")
+            user.User.gain_xp(one_boss.xp_value)
+        return isBeaten
