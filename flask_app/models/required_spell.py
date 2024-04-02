@@ -1,6 +1,8 @@
 from flask_app import app
 from flask_app.config.mysqlconnection import connectToMySQL
+from flask_app.models import spell
 from flask import flash, session
+import asyncio
 
 
 
@@ -49,7 +51,6 @@ class Required_Spell:
     # Read
     @classmethod
     def get_required_spell(cls, required_spell_id):
-        
         data = {
             'id' : required_spell_id
         }
@@ -64,6 +65,26 @@ class Required_Spell:
             return False
         return cls(results[0])
 
+    @classmethod
+    async def get_required_spells_for_boss(cls, boss_id):
+        data = {
+            "id" : boss_id
+        }
+        query = """
+        SELECT *
+        FROM required_spells
+        WHERE required_spells.boss_id = %(id)s
+        """
+        results = connectToMySQL(cls.db).query_db(query, data)
+        list_of_required_spells = []
+        if not results:
+            return list_of_required_spells
+        for row in results:
+            list_of_required_spells.append(cls(row))
+        return list_of_required_spells
+        
+        
+        
     # Update
     # Delete
     

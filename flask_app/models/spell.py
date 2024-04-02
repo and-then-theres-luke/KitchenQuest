@@ -4,6 +4,7 @@ from flask_app.config.mysqlconnection import connectToMySQL
 from flask_app.models import ingredient, user
 from datetime import date, timedelta
 from flask import flash, session
+import asyncio
 
 
 
@@ -84,7 +85,7 @@ class Spell:
         return cls(results[0])
     
     @classmethod
-    def get_spellbook_by_user_id(cls, user_id):
+    async def get_spellbook_by_user_id(cls, user_id):
         data = {
             'user_id' : user_id
         }
@@ -119,6 +120,8 @@ class Spell:
             if spell.current_charges <= 0:
                 cls.delete_spell_by_id(spell.id)
         return one_spellbook
+    
+
     
     # Update Spell Models
     @classmethod

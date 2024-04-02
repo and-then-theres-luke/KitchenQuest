@@ -4,7 +4,7 @@ from flask_app.models import ingredient, required_spell, spell, user, recipe
 from datetime import date, timedelta
 from flask import flash, session
 from flask_app.api_key import API_KEY
-import re
+import re, asyncio, concurrent
 
 
 
@@ -84,6 +84,15 @@ class Boss:
     # Read Boss
     
     @classmethod
+    async def detect_boss(cls, boss_id):
+        one_boss = cls.get_one_boss_by_id(boss_id)
+        one_boss.required_spells = await required_spell.Required_Spell.get_required_spells_for_boss(boss_id)
+        spellbook = await spell.Spell.get_spellbook_by_user_id(session['user_id'])
+        one_boss.required_spells = await cls.check_for_required_spells(spellbook, one_boss.required_spells)
+        return one_boss
+    
+    
+    @classmethod
     def get_one_boss_by_id(cls, boss_id):
         data = {
             'id' : boss_id
@@ -91,45 +100,17 @@ class Boss:
         query = """
         SELECT *
         FROM bosses
-        LEFT JOIN required_spells
-        ON bosses.id = required_spells.boss_id
-        WHERE bosses.id = %(id)s
+        WHERE id = %(id)s
         ;
         """
         results = connectToMySQL(cls.db).query_db(query, data)
-        boss_data = {
-            'id' : boss_id,
-            'title' : results[0]['title'],
-            'user_id' : results[0]['user_id'],
-            'api_recipe_id' : results[0]['api_recipe_id'],
-            'xp_value' : results[0]['xp_value'],
-            'image_url' : results[0]['image_url'],
-            'created_at' : results[0]['created_at'],
-            'updated_at' : results[0]['updated_at']
-        }
-        one_boss = cls(boss_data)
-        list_of_required_spells = []
-        if results[0]['required_spells.id'] == None:
-            return one_boss
-        for row in results:
-            required_spell_data = {
-                'id' : row['required_spells.id'],
-                'boss_id' : boss_id,
-                'api_ingredient_id' : row['api_ingredient_id'],
-                'name' : row['name'],
-                'amount' : row['amount'],
-                'unit' : row['unit'],
-                'created_at' : row['required_spells.created_at'],
-                'updated_at' : row['required_spells.updated_at']
-            }
-            list_of_required_spells.append(required_spell.Required_Spell(required_spell_data))
-        spellbook = spell.Spell.get_spellbook_by_user_id(session['user_id'])
-        list_of_required_spells = cls.check_for_required_spells(spellbook, list_of_required_spells)
-        one_boss.required_spells = list_of_required_spells
-        return one_boss
+        return cls(results[0])
         
         
         
+        
+    
+    
     @classmethod
     def get_all_bosses_by_user_id(cls, user_id):
         data = {
@@ -173,19 +154,21 @@ class Boss:
     # Misc Methods
     
     @classmethod
-    def check_for_required_spells(cls, spellbook, list_of_required_spells):
+    async def check_for_required_spells(cls, spellbook, list_of_required_spells):
+        tasks = []
         for one_required_spell in list_of_required_spells:
             isSpell = False
             isEnoughCharges = False
             for one_spell in spellbook:
                 if one_required_spell.api_ingredient_id == one_spell.api_ingredient_id:
                     isSpell = True
-                    one_required_spell.charge_amount = ingredient.Ingredient.convert_amounts(one_required_spell.api_ingredient_id, one_spell.charge_amount, one_spell.charge_unit, one_required_spell.unit)
+                    task = asyncio.create_task(ingredient.Ingredient.convert_amounts(one_required_spell.api_ingredient_id, one_spell.charge_amount, one_spell.charge_unit, one_required_spell.unit))
+                    tasks.append(task)
                     one_required_spell.charge_unit = one_required_spell.unit
                     # Converts the charge amount and charge unit from the spell to be read in an understandable way by the program
             one_required_spell.isSpell = isSpell
             if one_required_spell.isSpell == False:
-                flash("Your " + one_required_spell.name + " spell lacks the required charges.")
+                pass
             else:
                 if one_required_spell.charge_amount <= 0:
                     one_required_spell.charge_amount = 0.01
@@ -195,8 +178,13 @@ class Boss:
                 else:
                     isEnoughCharges = False
             one_required_spell.isEnoughCharges = isEnoughCharges
+        asyncio.gather(*tasks)
         return list_of_required_spells
     
+
+
+if __name__ == '__main__':
+    unittest.main()
     
     
     @classmethod
@@ -214,6 +202,5 @@ class Boss:
                         one_spell.current_charges -= required_spell.charges_needed
                         one_spell.update_charges(one_spell.id, one_spell.current_charges)
         if isBeaten == True:
-            flash("Boss defeated! Gained " + str(one_boss.xp_value) + " experience points.")
-            user.User.gain_xp(one_boss.xp_value)
+            pass
         return isBeaten

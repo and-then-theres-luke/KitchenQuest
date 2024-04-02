@@ -2,9 +2,8 @@
 from flask_app import app
 from flask_app.config.mysqlconnection import connectToMySQL
 from flask import flash, session, request
-import requests
+import requests, asyncio, re
 from flask_app.api_key import API_KEY
-import re
 
 ## ATTENTION
 # This is an API class, it only contains methods for returning JSON objects from the API.
@@ -37,7 +36,7 @@ class Ingredient:
         return cls(data)
     
     @staticmethod
-    def convert_amounts(api_ingredient_id, charge_amount, charge_unit, target_unit):
+    async def convert_amounts(api_ingredient_id, charge_amount, charge_unit, target_unit):
         print(api_ingredient_id, charge_amount, charge_unit, target_unit)
         if target_unit == "":
             targetAmount = charge_amount

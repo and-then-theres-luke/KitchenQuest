@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "*"
 mypysql = "*"
 flask-bcrypt = "*"
 requests = "*"
 asyncio = "*"
+flask = {extras = ["async"], version = "*"}
 
 [dev-packages]
 
