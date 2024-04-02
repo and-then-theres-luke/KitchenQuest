@@ -1,6 +1,7 @@
 from flask_app import app
 from flask import render_template, redirect, request, session
 from flask_app.models import user, ingredient
+import asyncio
 import requests
 
 # Create Users Controller
@@ -13,6 +14,14 @@ def register_frontend():
 
 
 # Read Users Controller
+
+@app.route('/async_test')
+async def async_test():
+    loop = asyncio.get_event_loop()
+    for i in range(10):
+        print(i)
+        await asyncio.sleep(1)
+    return render_template("test.html")
 
 @app.route('/')
 def index():

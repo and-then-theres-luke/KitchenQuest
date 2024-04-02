@@ -8,6 +8,7 @@ flask = "*"
 mypysql = "*"
 flask-bcrypt = "*"
 requests = "*"
+asyncio = "*"
 
 [dev-packages]
 
