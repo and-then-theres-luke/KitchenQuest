@@ -1,6 +1,6 @@
 from flask_app import app
 from flask_app.controllers import users, ingredients, recipes, bosses, spells, required_spells
-import unittest
+
 
 
 if __name__=="__main__":   

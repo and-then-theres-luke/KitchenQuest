@@ -1,6 +1,6 @@
 from flask_app import app
 from flask import render_template, redirect, request, session
-from flask_app.models import user, ingredient, test_spell_checker
+from flask_app.models import user, ingredient
 import asyncio
 import requests
 
@@ -14,14 +14,6 @@ def register_frontend():
 
 
 # Read Users Controller
-
-@app.route('/async_test')
-async def async_test():
-    test_spell_checker.Test_Spell_Checker.test_conversion_called()
-    test_spell_checker.Test_Spell_Checker.test_spell_found_insufficient_charges()
-    test_spell_checker.Test_Spell_Checker.test_spell_found_sufficient_charges()
-    test_spell_checker.Test_Spell_Checker.test_spell_not_found()
-    return render_template("test.html")
 
 @app.route('/')
 def index():

@@ -8,81 +8,172 @@
         />
         <script
             type="text/javascript"
-            src="{{ url_for('static', filename='js/script.js') }}"
+            src="{{ url_for('static', filename='js/bootstrap.js') }}"
             defer
         ></script>
         <link
             rel="stylesheet"
             type="text/css"
-            href="{{ url_for('static', filename='css/style.css') }}"
+            href="{{ url_for('static', filename='css/bootstrap.css') }}"
         />
         <title>KitchenQuest - Login</title>
     </head>
-    <body>
-        <h1>Welcome to KitchenQuest!</h1>
-        <h2>Please login or make an account to continue...</h2>
-        <!-- Flash messages for registration errors -->
-        {% with messages = get_flashed_messages(category_filter = ['register'])
-        %} {% if messages %} {% for message in messages %}
-        <p style="color: red">{{message}}</p>
-        {% endfor %} {% endif %} {% endwith %}
-        <!-- Flash messages for when a user tries to access pages without being logged in -->
-        {% with messages = get_flashed_messages(category_filter = ['login']) %}
-        {% for message in messages %}
-        <p style="color: red">{{message}}</p>
-        {% endfor %} {% endwith %}
-        <div>
-            <h3>Login</h3>
-            <form
-                action="/login/process"
-                method="POST"
-            >
-                <label
-                    >Email:
-                    <input
-                        type="email"
-                        name="email"
-                /></label>
-                <label
-                    >Password:
-                    <input
-                        type="password"
-                        name="password"
-                /></label>
-                <button>Submit</button>
-            </form>
-            <h3>Register</h3>
-            <form
-                action="/register"
-                method="POST"
-            >
-                <label
-                    >First Name:<input
-                        type="text"
-                        name="first_name"
-                /></label>
-                <label
-                    >Last Name:<input
-                        type="text"
-                        name="last_name"
-                /></label>
-                <label
-                    >Email:<input
-                        type="email"
-                        name="email"
-                /></label>
-                <label
-                    >Password:<input
-                        type="password"
-                        name="password"
-                /></label>
-                <label
-                    >First Name:<input
-                        type="password"
-                        name="confirm_password"
-                /></label>
-                <button>Submit</button>
-            </form>
+    <body class="container login_container">
+        <div class="container-sm justify-content-center align-self-center">
+            <div class="row justify-content-center">
+                <div class="col col-sm-8 text-center">
+                    <h1>Welcome to KitchenQuest!</h1>
+                    <h2 class="h4">Is this your first time?</h2>
+                    {% with messages = get_flashed_messages() %} {% if messages
+                    %}
+                    <ul class="flashes">
+                        {% for message in messages %}
+                        <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %} {% endwith %}
+                    <div class="col text-center">
+                        <button
+                            class="btn btn-warning col-12 mb-2"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#register"
+                        >
+                            Yes
+                        </button>
+                        <div
+                            class="collapse"
+                            id="register"
+                        >
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <form
+                                        action="/parent/register"
+                                        method="post"
+                                    >
+                                        <div class="mb-3">
+                                            <label
+                                                for="first_name"
+                                                class="form-label"
+                                                >First Name</label
+                                            >
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="first_name"
+                                                name="first_name"
+                                                placeholder="John"
+                                            />
+                                            <label
+                                                for="last_name"
+                                                class="form-label"
+                                                >Last Name</label
+                                            >
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="last_name"
+                                                name="last_name"
+                                                placeholder="Wayne"
+                                            />
+                                            <label
+                                                for="email"
+                                                class="form-label"
+                                                >Email address</label
+                                            >
+                                            <input
+                                                type="email"
+                                                class="form-control"
+                                                id="email"
+                                                name="email"
+                                                placeholder="name@example.com"
+                                            />
+                                            <label
+                                                for="password"
+                                                class="form-label"
+                                                >Password</label
+                                            >
+                                            <input
+                                                type="password"
+                                                class="form-control"
+                                                id="password"
+                                                name="password"
+                                            />
+                                            <label
+                                                for="confirm_password"
+                                                class="form-label"
+                                                >Confirm Password</label
+                                            >
+                                            <input
+                                                type="password"
+                                                class="form-control mb-2"
+                                                id="confirm_password"
+                                                name="confirm_password"
+                                            />
+                                            <button
+                                                class="btn btn-warning col-4"
+                                            >
+                                                Register!
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <button
+                            class="btn btn-warning col-12 mb-2"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#login"
+                        >
+                            No
+                        </button>
+                        <div
+                            class="collapse"
+                            id="login"
+                        >
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="mb-2">
+                                        <form
+                                            action="/login/process"
+                                            method="post"
+                                        >
+                                            <!-- Email -->
+                                            <label
+                                                for="login_email"
+                                                class="form-label"
+                                                >Email</label
+                                            >
+                                            <input
+                                                type="email"
+                                                class="form-control"
+                                                id="login_email"
+                                                name="email"
+                                            />
+                                            <!-- Password -->
+                                            <label
+                                                for="login_password"
+                                                class="form-label"
+                                                >Password</label
+                                            >
+                                            <input
+                                                type="password"
+                                                class="form-control"
+                                                id="login_password"
+                                                name="password"
+                                            />
+                                            <button
+                                                class="btn btn-warning col-4 mt-2"
+                                            >
+                                                Log In!
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>

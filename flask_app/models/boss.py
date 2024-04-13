@@ -165,7 +165,6 @@ class Boss:
                     task = asyncio.create_task(ingredient.Ingredient.convert_amounts(one_required_spell.api_ingredient_id, one_spell.charge_amount, one_spell.charge_unit, one_required_spell.unit))
                     tasks.append(task)
                     one_required_spell.charge_unit = one_required_spell.unit
-                    # Converts the charge amount and charge unit from the spell to be read in an understandable way by the program
             one_required_spell.isSpell = isSpell
             if one_required_spell.isSpell == False:
                 pass
@@ -182,9 +181,6 @@ class Boss:
         return list_of_required_spells
     
 
-
-if __name__ == '__main__':
-    unittest.main()
     
     
     @classmethod

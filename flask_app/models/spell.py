@@ -12,14 +12,14 @@ import asyncio
 class Spell:
     db = "kitchenquest" 
     def __init__(self, data):
-        self.id = data['id']                        # ID for an ingredient in the pantry
-        self.user_id = data['user_id']              # ID for the user whose pantry that ingredient is in
-        self.api_ingredient_id = data['api_ingredient_id']  # ID for the actual ingredient data according to api
+        self.id = data['id']
+        self.user_id = data['user_id']
+        self.api_ingredient_id = data['api_ingredient_id']
         self.name = data['name']
         self.current_charges = data['current_charges']
         self.charge_amount = data['charge_amount']
         self.charge_unit = data['charge_unit']
-        self.expiration_date = data['expiration_date'] # created_at(day) minus expiration I know it's pseudo code, shut up.
+        self.expiration_date = data['expiration_date']
         self.isFrozen = data['isFrozen']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
