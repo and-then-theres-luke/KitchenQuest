@@ -1,6 +1,6 @@
 from flask_app import app
 from flask import render_template, redirect, request, session
-from flask_app.models import recipe
+from flask_app.models import recipe, spell, ingredient
 import requests
 
 # Create Recipe Controller
@@ -21,8 +21,10 @@ def recipe_search_frontend():
     return render_template("recipe_search.html")
 
 @app.route('/recipes/show_one/<int:id>')
-def show_one_recipe_frontend(id):
+async def show_one_recipe_frontend(id):
     if 'user_id' not in session:
         return redirect("/login")
-    one_recipe = recipe.Recipe.recipe_boss_conversion_handler(id)
-    return render_template("one_recipe.html", one_recipe = one_recipe)
+    one_recipe = recipe.Recipe.get_recipe_by_api_recipe_id(id)
+    spellbook = spell.Spell.get_spellbook_by_user_id(session['user_id'])
+    recipe.Recipe.create_recipe_table(one_recipe, spellbook)
+    return render_template("hold.html")

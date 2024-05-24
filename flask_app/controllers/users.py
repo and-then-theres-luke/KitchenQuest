@@ -35,10 +35,10 @@ def login_process():
     return redirect('/dashboard')
 
 @app.route("/dashboard")
-def dashboard_frontend():
+async def dashboard_frontend():
     if 'user_id' not in session:
         return redirect('/login')
-    one_user = user.User.get_user_by_id(session['user_id'])
+    one_user = await user.User.get_user_by_id(session['user_id'])
     return render_template("dashboard.html", one_user = one_user, spellbook = one_user.spellbook)
 
 @app.route('/logout')

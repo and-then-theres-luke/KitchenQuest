@@ -85,7 +85,7 @@ class Spell:
         return cls(results[0])
     
     @classmethod
-    async def get_spellbook_by_user_id(cls, user_id):
+    def get_spellbook_by_user_id(cls, user_id):
         data = {
             'user_id' : user_id
         }

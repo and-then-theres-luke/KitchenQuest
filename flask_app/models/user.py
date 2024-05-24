@@ -83,7 +83,7 @@ class User:
         return users
     
     @classmethod
-    def get_user_by_id(cls, id):                # Returns a user object or false
+    async def get_user_by_id(cls, id):                # Returns a user object or false
         data = {
             'id' : id
         }
@@ -97,7 +97,7 @@ class User:
         if not results:
             return False
         one_user = cls(results[0])
-        one_user.spellbook = spell.Spell.get_spellbook_by_user_id(id)
+        one_user.spellbook = await spell.Spell.get_spellbook_by_user_id(id)
         one_user.bosses = boss.Boss.get_all_bosses_by_user_id(id)
         return one_user
     

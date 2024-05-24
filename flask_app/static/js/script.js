@@ -63,15 +63,8 @@ const recipe_lookup = async (table, search_string) => {
         const actionsAddToBosses = document.createElement("a");
         actionsAddToBosses.textContent = "Convert to Boss";
         actionsAddToBosses.href = "/recipes/show_one/" + row.id;
-        const actionsPipeElement = document.createElement("span");
-        actionsPipeElement.textContent = " | ";
-        const actionsAddToFavorites = document.createElement("a");
-        actionsAddToFavorites.textContent = "Add to Favorites";
-        actionsAddToFavorites.href = "/recipes/add_favorite/" + row.id;
 
         actionsCellElement.appendChild(actionsAddToBosses);
-        actionsCellElement.appendChild(actionsPipeElement);
-        actionsCellElement.appendChild(actionsAddToFavorites);
         rowElement.appendChild(actionsCellElement);
         tableBody.appendChild(rowElement);
     }

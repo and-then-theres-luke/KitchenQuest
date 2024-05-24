@@ -1,0 +1,11 @@
+STATE OF THE APP:
+
+I need to find a way to track the ingredients that are being used. I should give each one a counter.
+
+I need to modify my code so that it automatically makes suggestions on what I could make based on the ingredients in my pantry.
+
+MOST IMPORTANTLY, I need to find a way to make bosses from scratch.
+
+How do I do that? I could guide the user through a series of progressions. Maybe this is the opportunity I wanted to learn react. Hmmm.... React or Bootstrap. React based on my resume, duh. 
+
+So, frontend priority, learning React. Backend priority, adding the logic for creating a boss from scratch.

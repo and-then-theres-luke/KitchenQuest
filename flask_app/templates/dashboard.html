@@ -18,54 +18,57 @@
             <title>KitchenQuest - Dashboard</title>
         </head>
         <body>
-            <div class="header-left">
-                <h1 class="h1 text-warning">KitchenQuest</h1>
-                <p class="h5 text-warning">Track Ingredients | Fight Bosses | Eat Well</p>
-            </div>
-            <nav class="navbar navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a
-                                class="nav-link active"
-                                aria-current="page"
-                                href="/dashboard"
-                                >Dashboard</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link active"
-                                aria-current="page"
-                                href="/ingredients/search"
-                                >Search Ingredients</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link active"
-                                aria-current="page"
-                                href="/recipes/search"
-                                >Search Recipes</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link active"
-                                aria-current="page"
-                                href="/logout"
-                                >Logout</a
-                            >
-                        </li>
-                    </ul>
+            <div class="row">
+                <div class="col header-left">
+                    <h1 class="h1 text-warning">KitchenQuest</h1>
+                    <p class="h5 text-warning">Track Ingredients | Fight Bosses | Eat Well</p>
+                </div>
+                <div class="col header-right">
+                    <h2>Current XP: {{one_user.xp}}</h2>
                 </div>
             </div>
-        </nav>
+            <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                <div class="container-fluid">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link active"
+                                    aria-current="page"
+                                    href="/dashboard"
+                                    >Dashboard</a
+                                >
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link active"
+                                    aria-current="page"
+                                    href="/ingredients/search"
+                                    >Search Ingredients</a
+                                >
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link active"
+                                    aria-current="page"
+                                    href="/recipes/search"
+                                    >Search Recipes</a
+                                >
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link active"
+                                    aria-current="page"
+                                    href="/logout"
+                                    >Logout</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
         <main class="container-m dashboard_main">
             <div class="row">
-                
                 <div class="col col-md-8 dashboard_left_col">
-                    <h2>Current XP: {{one_user.xp}}</h2>
                     <h2>Spellbook</h2>
                     <table
                         id="spellbook_table"
@@ -109,7 +112,7 @@
                     </table>
                 </div>
                 <div class="col col-md-4 dashboard_right_col">
-                    <h2>Upcoming Bosses</h2>
+                    <h2>Bosses</h2>
                     {% with messages = get_flashed_messages()%} {% if messages%} {% for
                         message in messages %}
                         <p style="color: red">{{ message }}</p>
@@ -126,9 +129,8 @@
                                     <a href="/bosses/view/{{boss.id}}" class="btn btn-primary">View</a>
                                 </div>
                             </div>
-                            {% endfor %} {% endwith %}
-                        </tbody>
-                    </table>
+                        {% endfor %} 
+                    {% endwith %}
                 </div>
             </div>
         </main>

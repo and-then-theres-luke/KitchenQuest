@@ -9,6 +9,7 @@ import requests, asyncio
 def create_boss_frontend():
     if 'user_id' not in session:
         return redirect("/login")
+    print(request.form)
     boss.Boss.create_boss_with_required_spells(request.form)
     return redirect("/dashboard")
 
@@ -16,7 +17,7 @@ def create_boss_frontend():
 def render_one_boss_frontend(boss_id):
     if 'user_id' not in session:
         return redirect("/login")
-    asyncio.run(boss.Boss.detect_boss(boss_id))
+    one_boss = asyncio.run(boss.Boss.detect_boss(boss_id))
     return render_template("one_boss.html", one_boss = one_boss)
 
 @app.route('/bosses/defeat/<int:boss_id>')
