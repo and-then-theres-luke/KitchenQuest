@@ -70,47 +70,33 @@
                     <thead>
                         <th>Spell</th>
                         <th>Recipe Calls For</th>
-                        <th>One Charge is Equal To</th>
-                        <th>Charges Needed</th>
+                        <th>Spell in Spellbook?</th>
                         <th>Actions</th>
                     </thead>
                     <tbody>
                             <input type="hidden" name="api_recipe_id" value="{{one_recipe.id}}">
-                            <input type="hidden" name="title" value="{{one_recipe.title}}">
-                            <input type="hidden" name="image_url" value="{{one_recipe.image}}">
-                            {% for ingredient in one_recipe.extendedIngredients %}
-                            {% if ingredient.isSpell == False %}
+                            {% for x in range(0,len) %}
                             <tr>
-                                <!-- Inputs -->
-                                <input type="hidden" name="ingredient_index_{{loop.index}}_api_ingredient_id" value="{{ingredient.id}}">
-                                <input type="hidden" name="ingredient_index_{{loop.index}}_name" value="{{ingredient.nameClean}}">
-                                <input type="hidden" name="ingredient_index_{{loop.index}}_amount" value="{{ingredient.amount}}">
-                                <input type="hidden" name="ingredient_index_{{loop.index}}_unit" value="{{ingredient.unit}}">
-                                <!-- Spell Name -->
-                                <td>{{ingredient.nameClean}}</td>
-                                <!-- recipe calls for -->
-                                <td><span id="ingredient_index_{{loop.index}}_amount">{{ingredient.amount}}</span> {{ingredient.unit}}</td>
-                                <!-- one charge is equal to -->
-                                <td></td>
-                                <!-- Charges needed -->
-                                <td></td>
-                                <!-- Actions -->
-                                <td><a class="btn btn-primary" href="/ingredients/show_one/{{ingredient.id}}">Create Spell</a></td>
+                                <td>
+                                    {{required_spells.loc[x,'nameClean']}}
+                                </td>
+                                <td>
+                                    {{required_spells.loc[x,'amount']}} {{required_spells.loc[x,'unit']}} 
+                                </td>
+                                <td>
+                                    {{required_spells.loc[x,'isSpell']}}
+                                </td>
+                                <td>
+                                    {% if required_spells.loc[x,'isSpell'] == False %}
+                                    {% with passed_data = open_ingredient_window(required_spells.loc[x,'id']) %}
+                                    <a class="btn btn-primary" onclick="{{passed_data}}">Add to Spellbook</a>
+                                    {% endwith %}
+                                    {% else %}
+                                    {% endif %}
+                                </td>
                             </tr>
-                            {% else %}
-                            <tr>
-                                <!-- Spell Name -->
-                                <td name="ingredient_index_{{loop.index}}_name">{{ingredient.name}}</td>
-                                <!-- recipe calls for -->
-                                <td>{{ingredient.amount}} {{ingredient.unit}}</td>
-                                <!-- one charge is equal to -->
-                                <td>{{ingredient.charge_amount}} {{ingredient.charge_unit}}</td>
-                                <!-- Charges needed -->
-                                <td>{{ingredient.amount / ingredient.charge_amount}}</td>
-                                <!-- Actions -->
-                            </tr>
-                            {% endif %}
                             {% endfor %}
+                            
                     </tbody>
                 </table>
             <button class="btn btn-primary">Submit Boss</button>

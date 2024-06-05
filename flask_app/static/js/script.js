@@ -1,3 +1,12 @@
+const open_ingredient_window = (passed_data) => {
+    passed_url = "/ingredients/show_one/semi_view/" + passed_data;
+    window.open(
+        passed_url,
+        "",
+        "height=500,width=600,menubar=no,resizable=yes"
+    );
+};
+
 const ingredient_lookup = async (table, search_string) => {
     let tableBody = table.querySelector("tbody");
     let res = await fetch(

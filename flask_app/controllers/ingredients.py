@@ -11,6 +11,13 @@ def show_one_ingredient(ingredient_id):
     one_ingredient = ingredient.Ingredient.get_ingredient_by_api_ingredient_id(ingredient_id)
     return render_template("one_ingredient.html", one_ingredient = one_ingredient)
 
+@app.route('/ingredients/show_one/semi_view/<string:ingredient_id>')
+def show_one_ingredient_semi(ingredient_id):
+    if "user_id" not in session:
+        return redirect("/login")
+    one_ingredient = ingredient.Ingredient.get_ingredient_by_api_ingredient_id(ingredient_id)
+    return render_template("one_ingredient_semi.html", one_ingredient = one_ingredient)
+
 # Ingredient Search
 @app.route("/ingredients/search")
 def ingredient_search_frontend():

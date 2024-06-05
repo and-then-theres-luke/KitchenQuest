@@ -28,33 +28,31 @@ class Boss:
     
     # Create Boss Method
     @classmethod
-    def create_boss_with_required_spells(cls, inputs):
-        cleaned_inputs = []
-        for item in inputs:
-            cleaned_inputs.append(inputs[item])
+    def create_boss_with_required_spells(cls, api_recipe_id):
+        one_recipe = recipe.Recipe.get_recipe_by_api_recipe_id(api_recipe_id)
         xp_value = 0
-        for row in inputs:
+        for _ in one_recipe.extendedIngredients:
             xp_value += 1
         xp_value = (xp_value / 6) * 25
         boss_data = {
             'user_id' : session['user_id'],
-            'api_recipe_id' : inputs['api_recipe_id'], # Index 0
-            'title' : inputs['title'], # Index 1
-            'image_url' : inputs['image_url'], # Index 2
+            'api_recipe_id' : api_recipe_id,
+            'title' : one_recipe['title'],
+            'image_url' : one_recipe['image_url'],
             'xp_value' : xp_value
         }
         boss_id = cls.create_boss(boss_data)
-        ingredient_data = {
-            'boss_id' : boss_id,
-        }
-        index = 3
-        while (index < len(cleaned_inputs)-1):
-            ingredient_data['api_ingredient_id'] = cleaned_inputs[index]
-            ingredient_data['name'] = cleaned_inputs[index+1]
-            ingredient_data['amount'] = cleaned_inputs[index+2]
-            ingredient_data['unit'] = cleaned_inputs[index+3]
-            index += 4
-            required_spell.Required_Spell.create_required_spell(ingredient_data)
+        for ingredient in one_recipe.extendedIngredients:
+            data = {
+                "boss_id" : boss_id,
+                "api_ingredient_id" : ingredient.id,
+                "name" : ingredient.name,
+                "amount" : ingredient.amount,
+                "unit" : ingredient.unit
+            }
+            print(data)
+            # required_spell.Required_Spell.create_required_spell(data)
+        return
         
     
     @classmethod

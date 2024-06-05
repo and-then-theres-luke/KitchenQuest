@@ -19,9 +19,7 @@ class Recipe:
         self.image = data['image']
         self.imageType = data['imageType']
         self.servings = data['servings']
-        self.readyInMinutes = data['readyInMinutes']
         self.extendedIngredients = data['extendedIngredients']
-        self.summary = data['summary']
 
     # Read Recipe
     @classmethod
@@ -33,40 +31,37 @@ class Recipe:
                             API_KEY)
         one_recipe = res.json()
         data = {
-            'id' : one_recipe['id'], 
-            'title' : one_recipe['title'], 
-            'image' : one_recipe['image'], 
-            'imageType' : one_recipe['imageType'], 
-            'servings' : one_recipe['servings'], 
-            'readyInMinutes' : one_recipe['readyInMinutes'], 
+            'id' : one_recipe['id'],
+            'title' : one_recipe['title'],
+            'image' : one_recipe['image'],
+            'imageType' : one_recipe['imageType'],
+            'servings' : one_recipe['servings'],
             'extendedIngredients' : one_recipe['extendedIngredients'],
-            'summary' : one_recipe['summary']
         }
         one_recipe = cls(data)
         return one_recipe
 
         # Read Recipe
-    @classmethod
-    def get_recipe_by_api_recipe_id_raw_data(cls, api_recipe_id):
-        res = requests.get(
-                            'https://api.spoonacular.com/recipes/' +
-                            str(api_recipe_id) +
-                            '/information?includeNutrition=false&apiKey=' + 
-                            API_KEY)
-        one_recipe = res.json()
-        data = {
-            'id' : one_recipe['id'], 
-            'title' : one_recipe['title'], 
-            'image' : one_recipe['image'], 
-            'extendedIngredients' : one_recipe['extendedIngredients'],
-        }
-        return data
+
     
     @classmethod
     def recipe_to_boss_conversion_handler(cls, api_recipe_id):
         one_recipe = recipe.Recipe.get_recipe_by_api_recipe_id_raw_data(api_recipe_id)
         spellbook = spell.Spell.get_spellbook_by_user_id(session['user_id'])
         cls.convert_ingredients(one_recipe, spellbook)
+    
+    @classmethod
+    def spell_check(cls, df, spellbook):
+        for x in range(0, len(df.index)):
+            for one_spell in spellbook:
+                if df.loc[x]['id'] == one_spell.api_ingredient_id:
+                    df.loc[x]['isSpell'] = True
+                    break
+                else:
+                    df.loc[x]['isSpell'] = False
+        returned_dict = df.to_dict(orient='records', index=True)
+        print(returned_dict)
+        return returned_dict
     
     @classmethod
     def convert_ingredients(cls, one_recipe, spellbook):

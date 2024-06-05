@@ -101,24 +101,21 @@ class Spell:
         return one_spellbook
 
     @classmethod
-    def get_spellbook_by_user_id_raw_data(cls, user_id):
+    def get_spellbook_apis_by_user_id(cls, user_id):
         data = {
             'user_id' : user_id
         }
         query = """
-        SELECT *
+        SELECT api_ingredient_id
         FROM spells
         WHERE user_id = %(user_id)s
         ;
         """
         results = connectToMySQL(cls.db).query_db(query, data)
-        one_spellbook = []
-        for row in results:
-            one_spellbook.append(cls(row))
-        for spell in one_spellbook:
-            if spell.current_charges <= 0:
-                cls.delete_spell_by_id(spell.id)
-        return one_spellbook
+        pure_list = []
+        for item in results:
+            pure_list.append(item['api_ingredient_id'])
+        return pure_list
     
     # Update Spell Models
     @classmethod

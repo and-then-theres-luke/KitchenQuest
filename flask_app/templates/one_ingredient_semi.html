@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <script
+            type="text/javascript"
+            src="{{ url_for('static', filename='js/script.js') }}"
+            defer
+        ></script>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="../../static/css/bootstrap.css"
+        />
+        <title>{{one_ingredient.name}}</title>
+    </head>
+    <body>
+        <main>
+            <h1>Create a new {{one_ingredient.name}} Spell</h1>
+            <img
+                src="https://spoonacular.com/cdn/ingredients_250x250/{{one_ingredient.image}}"
+                alt=""
+            />
+            <form
+                class="ingredients_form"
+                action="/ingredients/make_spell"
+                method="POST"
+            >
+                <input
+                    type="hidden"
+                    value="{{one_ingredient.name}}"
+                    name="name"
+                />
+                <input
+                    type="hidden"
+                    value="{{session['user_id']}}"
+                    name="user_id"
+                />
+                <input
+                    type="hidden"
+                    value="{{one_ingredient.api_ingredient_id}}"
+                    name="api_ingredient_id"
+                />
+                <label
+                    >Number of Charges (servings):<input
+                        type="number"
+                        min="1"
+                        name="current_charges"
+                        id="current_charges"
+                /></label>
+                <label>One Charge of this spell is equal to: </label>
+                <input
+                    type="float"
+                    name="charge_amount"
+                />
+                <select name="charge_unit">
+                    {% with possibleUnits = one_ingredient.possibleUnits %} {%
+                    for item in possibleUnits %}
+                    <option value="{{item}}">{{item}}</option>
+                    {% endfor %} {% endwith %}
+                </select>
+                <label
+                    >This Spell expires on:
+                    <input
+                        type="date"
+                        name="expiration_date"
+                /></label>
+                <input
+                    type="hidden"
+                    name="isFrozen"
+                    value="0"
+                />
+                <button class="btn btn-primary">Create Spell</button>
+            </form>
+            {% with messages = get_flashed_messages()%} {% if messages%} {% for
+            message in messages %}
+            <p style="color: red">{{ message }}</p>
+            {% endfor %} {% endif %} {% endwith %}
+        </main>
+    </body>
+</html>
